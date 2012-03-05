@@ -1,0 +1,3 @@
+[submodule "clojurescript"]
+	path = clojurescript
+	url = git://github.com/clojure/clojurescript.git
