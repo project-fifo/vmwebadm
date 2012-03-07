@@ -2,6 +2,7 @@
   (:use-macros [clojure.core.match.js :only [match]])
   (:use [server.utils :only [clj->js]])
   (:require [server.routes :as routes]
+            [clojure.string :as c.s]
             [cljs.nodejs :as node]))
 
 (def http
@@ -10,9 +11,22 @@
 (def url
   (node/require "url"))
 
+(def path
+  (node/require "path"))
+
+(defn parse-url [req]
+  (let [parts (vec (next (js->clj (.split (.-path (.parse url (. req -url))) "/"))))
+        [base ext] (c.s/split (last parts) #"\.")
+        resource (conj
+                  (vec (butlast parts))
+                  base)]
+    {:parts parts
+     :resource resource
+     :ext ext}))
+
 (defn handler [req res]
   (routes/dispatch
-   (vec (next (js->clj (.split (.-path (.parse url (. req -url))) "/"))))
+   (parse-url req)
    res))
 
 (defn start [& _]

@@ -6,13 +6,14 @@ DEPLOY_USER=root
 DEPLOY_HOST=192.168.0.27
 DEPLOY_PATH=/usbkey/server
 
+all: server
+
 bootstrap:
 	git submodule init
 	git submodule update
-	cd clojurescript/; ./scripts/bootstrap
+	cd clojurescript/ && git checkout r971; 
+	cd clojurescript/ && ./script/bootstrap
 	cp lib/* clojurescript/lib/
-
-all: server
 
 clean: clean-server clean-client
 
