@@ -1,0 +1,6 @@
+
+There is a bug in clojurescript: http://dev.clojure.org/jira/browse/CLJS-153
+untill it is fixed run:
+git checkout r971
+
+before building clojurescript
