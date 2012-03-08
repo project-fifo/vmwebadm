@@ -22,11 +22,13 @@
                   base)]
     {:parts parts
      :resource resource
+     :method req.method
      :ext ext}))
 
 (defn handler [req res]
   (routes/dispatch
    (parse-url req)
+   req
    res))
 
 (defn start [& _]

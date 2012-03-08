@@ -26,14 +26,36 @@
 (defn res-ext [ext]
   (get ext-map ext res-text))
 
-(defn dispatch [resource res]
-  (match [(:resource resource)]
-         [[""]] (res-text res "root")
-         [["vms"]] (vm/lookup
-                    (fn [error resp]
-                      ((res-ext (:ext resource)) res resp)))
-         [["vms" uuid]] (vm/lookup
-                         uuid
-                         (fn [error resp]
-                           ((res-ext (:ext resource)) res resp)))         
-         [p]    (res-text res (str "Hello Path!\n" (pr-str resource)))))
+(defn dispatch [resource request response]
+  (let [ext (:ext resource)
+        method (:method resource)
+        path (:resource resource)
+        out (partial (res-ext ext) response)
+        default-callback (fn [error resp]
+                           (if error
+                             (out error)
+                             (out resp)))]
+    (match [method path]
+           [_ [""]]
+           (response-text response "root")
+           ["GET" ["vms"]]
+           (vm/lookup default-callback)
+           ["GET" ["vms" uuid]]
+           (vm/lookup uuid default-callback)
+           ["DELETE" ["vms" uuid]]
+           (vm/delete uuid default-callback)
+           ["PUT" ["vms" uuid]]
+           (let [body (atom "")]
+             (print "put:" uuid "\n")
+             (.on request "data"
+                  (fn [cache]
+                    (prn cache)
+                    (print " <cache\n")
+                    (swap! body str cache)))
+             (.on request "end"
+                  #(vm/update
+                    uuid
+                    (js->clj (.parse js/JSON @body))
+                    default-callback)))
+           
+           [_ p]    (response-text response (str "Hello Path!\n" (pr-str responseource))))))
