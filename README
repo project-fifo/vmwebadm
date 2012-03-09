@@ -1,5 +1,9 @@
-There is a bug in clojurescript: http://dev.clojure.org/jira/browse/CLJS-153
-untill it is fixed run:
-git checkout r971
+This project is ment to implement Joyent's cloud API (http://apidocs.joyent.com/sdcapidoc/cloudapi/#machines) ontop of vanilla SmartOS to allow an easyer maintainace and handling of the host.
 
-before building clojurescript
+At the current state no authentication is supported since it is assumed that the node's admin lan is trusted if security is required the best way is to run it on localhost only and use ssh forwarding.
+
+To use tools like SmartDC CLI (http://wiki.joyentcloud.com/display/jpc2/About+Using+the+Cloud+API) with this append the --url parameter a http url to the vmwebadm server - the login has to be given but will be ignored.
+
+To get started run make bootstrap, adjust the DEPLOY_* parameters in the makefile and run make deploy, this will build the project and scp it to your host. The Port and listen address can currently only be confiugred in the src/server/core.cljs file.
+
+
