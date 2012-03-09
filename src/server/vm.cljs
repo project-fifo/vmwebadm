@@ -41,15 +41,15 @@
 ;  "lookup([match={}], callback)"
 (defn lookup
   ([callback]
-     (lookup {} callback))
-  ([search callback]
+     (lookup {} {:full true} callback))
+  ([search opts callback]
      (.lookup
       VM
       (clj->js
        (if (string? search)
          {"uuid" search}
          search))
-      (clj->js {:full false})
+      (clj->js opts)
       (wrap-callback callback))))
 
 ;  "console(uuid, callback)"

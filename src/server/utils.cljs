@@ -18,3 +18,18 @@
 
 (defn clj->json [c]
   (.stringify js/JSON (clj->js c)))
+
+(defn transform-keys [key-map in]
+  (reduce
+   (fn [m [q-name d-name]]
+     
+     (if-let [val (in q-name)]
+       (if (vector? d-name)
+         (let [[d-name transformer] d-name]
+           (assoc m d-name (transformer val)))
+         (assoc m d-name val))))
+   {}
+   key-map))
+
+(defn prn [form]
+  (print "prn>" (pr-str form) "\n"))

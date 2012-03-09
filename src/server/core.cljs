@@ -5,6 +5,7 @@
             [clojure.string :as c.s]
             [cljs.nodejs :as node]))
 
+(def *debug* true)
 (def http
   (node/require "http"))
 
@@ -20,16 +21,19 @@
         [base ext] (c.s/split (last parts) #"\.")
         resource (conj
                   (vec (butlast parts))
-                  base)]
-    {:parts parts
-     :resource resource
-     :method req.method
-     :query (if-let [qry (.-query url)]
-              (js->clj qry)
-              {})
-     :ext ext}))
+                  base) 
+        return {:parts parts
+                :resource resource
+                :method req.method
+                :query (if-let [qry (.-query url)]
+                         (js->clj qry)
+                         {})
+                :ext ext}]
+    (if *debug* (print (pr-str return) "\n"))
+    return))
 
 (defn handler [req res]
+  
   (routes/dispatch
    (parse-url req)
    req
@@ -37,7 +41,7 @@
 
 (defn start [& _]
   (let [server (.createServer http handler)
-        port 1337
+        port 80
         host "0.0.0.0"]
     (.listen server port host)
     (println "Server running at http://127.0.0.1:1337/")))
