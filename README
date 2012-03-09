@@ -6,4 +6,8 @@ To use tools like SmartDC CLI (http://wiki.joyentcloud.com/display/jpc2/About+Us
 
 To get started run make bootstrap, adjust the DEPLOY_* parameters in the makefile and run make deploy, this will build the project and scp it to your host. The Port and listen address can currently only be confiugred in the src/server/core.cljs file.
 
+Currently (mostly) supported API/tools:
+
+ListMachines / sdc-listmachines 
+
 
