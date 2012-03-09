@@ -1,6 +1,6 @@
 (ns server.core
   (:use-macros [clojure.core.match.js :only [match]])
-  (:use [server.utils :only [clj->js]])
+  (:use [server.utils :only [clj->js prn-js]])
   (:require [server.routes :as routes]
             [clojure.string :as c.s]
             [cljs.nodejs :as node]))
@@ -15,7 +15,8 @@
   (node/require "path"))
 
 (defn parse-url [req]
-  (let [parts (vec (next (js->clj (.split (.-path (.parse url (. req -url))) "/"))))
+  (let [url (.parse url (.-url req) true)
+        parts (vec (next (js->clj (.split (.-pathname url) "/"))))
         [base ext] (c.s/split (last parts) #"\.")
         resource (conj
                   (vec (butlast parts))
@@ -23,6 +24,9 @@
     {:parts parts
      :resource resource
      :method req.method
+     :query (if-let [qry (.-query url)]
+              (js->clj qry)
+              {})
      :ext ext}))
 
 (defn handler [req res]

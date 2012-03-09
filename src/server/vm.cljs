@@ -49,7 +49,7 @@
        (if (string? search)
          {"uuid" search}
          search))
-      (clj->js {:full true})
+      (clj->js {:full false})
       (wrap-callback callback))))
 
 ;  "console(uuid, callback)"

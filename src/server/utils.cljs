@@ -12,3 +12,9 @@
                                 (assoc m (clj->js k) (clj->js v))) {} x))
    (coll? x) (apply array (map clj->js x))
    :else x))
+
+(defn prn-js [json]
+  (print (.stringify js/JSON json) "\n"))
+
+(defn clj->json [c]
+  (.stringify js/JSON (clj->js c)))
