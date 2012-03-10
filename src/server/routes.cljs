@@ -1,6 +1,7 @@
 (ns server.routes
   (:require [server.vm :as vm]
             [server.machines.list :as machines.list]
+            [server.machines.get :as machines.get]
             [server.http :as http])
   (:use [server.utils :only [clj->js prn-js clj->json]])
   (:use-macros [clojure.core.match.js :only [match]]))
@@ -22,12 +23,14 @@
            (http/response-text response "root")
            ["GET" [account "machines"]]
            (machines.list/handle resource request response)
+           ["GET" [account "machines" uuid]]
+           (machines.get/handle resource request response uuid)
            ["PUT" ["vms"]]
            (http/with-reqest-body request response
              (fn [data]
                (vm/create
                 data
-                default-callback)))           
+                default-callback)))
            ["GET" ["vms" uuid]]
            (vm/lookup uuid default-callback)
            ["DELETE" ["vms" uuid]]

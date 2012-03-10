@@ -3,8 +3,8 @@ SERVER_FILES=src/server/
 CLIENT_FILES=src/client/
 CLJSC_CP=lib/*:
 DEPLOY_USER=root
-DEPLOY_HOST=192.168.0.27
-DEPLOY_PATH=/usbkey/server
+DEPLOY_HOST=192.168.155.139
+DEPLOY_PATH=/zones/server
 
 all: server
 

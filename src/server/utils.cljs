@@ -27,7 +27,8 @@
        (if (vector? d-name)
          (let [[d-name transformer] d-name]
            (assoc m d-name (transformer val)))
-         (assoc m d-name val))))
+         (assoc m d-name val))
+       m))
    {}
    key-map))
 

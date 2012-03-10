@@ -40,7 +40,7 @@
      {:full true}
      (fn [error vms]
        (if error
-         (default-callback error vms)
+         (http/errpr response error)
          (let [limit (qry "limit")
                offset (get qry "offset" 0)
                vms (drop offset vms)

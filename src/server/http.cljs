@@ -5,6 +5,12 @@
   (.writeHead response code (clj->js headers))
   (.end response content))
 
+
+(defn error [response error]
+  (http/write response 500
+              {"Content-Type" "application/json"}
+              (clj->json {:error error})))
+
 (defn respond [content-type formater res content]
   (write res 200 {"Content-Type" content-type}
          (formater (or content ""))))
