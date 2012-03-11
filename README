@@ -50,8 +50,14 @@ sdc-getoacjage --account licenser --url http://192.168.155.139 small
 
 
 
-Overview
+API Overview
 
+
+Packages
+[X] ListPackages
+[X] GetPackage
+
+Machines 
 [X] ListMachines
 [X] GetMachine
 [X] CreateMachine
