@@ -3,7 +3,8 @@
   (:use [server.utils :only [clj->js prn-js prn]])
   (:require [server.routes :as routes]
             [clojure.string :as c.s]
-            [cljs.nodejs :as node]))
+            [cljs.nodejs :as node]
+            [server.storage :as storage]))
 
 (def http
   (node/require "http"))
@@ -40,6 +41,7 @@
   (let [server (.createServer http handler)
         port 80
         host "0.0.0.0"]
+    (storage/init)
     (.listen server port host)
     (println "Server running at" (str "http//" host ":" port "/"))))
 

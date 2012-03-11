@@ -37,4 +37,4 @@ client:
           :output-dir "out/client" :output-to "out/client/client.js"}'
 
 deploy: all
-	scp -r start.sh out/* $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
+	scp -r start.sh db.js out/* $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)

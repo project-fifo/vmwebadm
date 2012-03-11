@@ -1,7 +1,8 @@
 (ns server.machines.create
   (:use [server.utils :only [clj->js prn-js clj->json transform-keys prn]])
   (:require [server.vm :as vm]
-            [server.http :as http]))
+            [server.http :as http]
+            [server.storage :as storage]))
 
 (defn- assoc-if [m m1 k]
   (if-let [v (m1 "metadata")]
@@ -12,7 +13,8 @@
   (if-let [spec 
            (if-let [package (data "package")]
              (if (= (first package) "{")
-               (js->clj (.parse js/JSON package))))]
+               (js->clj (.parse js/JSON package))
+               (get-in @storage/data ["packages" package])))]
     (let [spec (assoc-if spec data "metadata")]
       (if-let [dataset  (data "dataset")]
         (if (= (spec "brand") "kvm")

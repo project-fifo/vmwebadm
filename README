@@ -23,14 +23,16 @@ sdc-stopmachine --url http://192.168.155.139 --account bla 40e06b7a-314a-4028-a3
 RebootMachine / sdc-rebootmachien
 sdc-rebootmachine --url http://192.168.155.139 --account bla 40e06b7a-314a-4028-a328-84619c47fc68
 
-
 DeleteMachine / sdc-deletemachine
 sdc-deletemachine --account bla --url http://192.168.155.139 5a749276-9b9f-44b3-83c4-5965a7525646
 
-CreateMachine / sdc-createmachien - spec passed as package!
+CreateMachine / sdc-createmachien - spec passed as package or packages defined in db.js!
 sdc-createmachine --url http://192.168.155.139 --account bla \
 --dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
 --package '{"brand": "joyent","zfs_io_priority": 30,"quota": 20,"nowait": true,"max_physical_memory": 256,"alias": "zone4","nics": [{"nic_tag": "external","ip": "dhcp"}]}'
+sdc-createmachine --url http://192.168.155.139 --account bla \
+--dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
+--package small
 
 
 ResizeMachine / sdc-resizemachine - update spec passed as package!
