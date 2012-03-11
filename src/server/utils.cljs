@@ -21,13 +21,11 @@
 
 (defn transform-keys [key-map in]
   (reduce
-   (fn [m [q-name d-name]]
-     
+   (fn [m [q-name d]]
      (if-let [val (in q-name)]
-       (if (vector? d-name)
-         (let [[d-name transformer] d-name]
-           (assoc m d-name (transformer val)))
-         (assoc m d-name val))
+       (if (fn? d)
+         (d m val)
+         (assoc m d val))
        m))
    {}
    key-map))

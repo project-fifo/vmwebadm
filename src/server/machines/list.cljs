@@ -9,9 +9,14 @@
    "type" "brand"
    "dataset" "zfs_filesystem"
    "state" "state"
-   "memory" "max_physical_memory"})
+   "memory" "max_physical_memory"
+   "tag" (fn [m tags]
+           (reduce
+            (fn [m [k v]]
+              (assoc m k v))
+            m tags))
+   })
 
-;   tag.$name	String	An arbitrary set of tags can be used to query on, assuming they are prefixed with "tag."
 ;   tombstone	Number	Include machines destroyed in the last N minutes
 ;   credentials	Boolean	Whether to include the generated credentials for machines, if present. Defaults to false.
 
@@ -20,14 +25,16 @@
    "zonename" "name"
    "brand" "type"
    "state" "state"
-   "nics" ["ips" (fn [nics]
+   "nics" (fn [m nics]
+            (assoc m "ips"
                    (filter #(not= "dhcp")
-                           (map #(get % "ip") nics)))]
+                           (map #(get % "ip") nics))))
    "max_physical_memory" "memory"
-   "disks" ["disk"
-            (fn [disks]
-              (reduce + 
-                      (map #(/ (get % "size") 1024) disks)))]
+   "disks" (fn [m disks]
+             (assoc m "disk"
+                    (reduce
+                     + 
+                     (map #(/ (get % "size") 1024) disks))))
    "create_timestamp" "create"
    "zfs_filesystem" "dataset" 
    })
@@ -40,7 +47,7 @@
      {:full true}
      (fn [error vms]
        (if error
-         (http/errpr response error)
+         (http/error response error)
          (let [limit (qry "limit")
                offset (get qry "offset" 0)
                vms (drop offset vms)

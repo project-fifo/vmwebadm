@@ -10,11 +10,15 @@
   (node/require "VM"))
 
 ;  "start(uuid, extra, callback)"
-(defn start [uuid callback]
-  (.start
-   VM
-   (clj->js uuid)
-   (wrap-callback callback)))
+(defn start
+  ([uuid callback]
+     (start uuid {} callback))
+  ([uuid extra callback]
+      (.start
+       VM
+       (clj->js uuid)
+       (clj->js extra)
+       (wrap-callback callback))))
 
 ;  "stop(uuid, options={[force=true]}, callback)"
 (defn stop
