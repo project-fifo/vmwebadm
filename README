@@ -34,5 +34,32 @@ sdc-createmachine --url http://192.168.155.139 --account bla \
 
 
 ResizeMachine / sdc-resizemachine - update spec passed as package!
-
 sdc-resizemachine --url http://192.168.155.139 --account bla --package '{"max_physical_memory":128}' 54e85ffa-988c-47b3-90f1-9ee5c23a8849
+
+
+
+
+Overview
+
+[X] ListMachines
+[X] GetMachine
+[X] CreateMachine
+[X] StopMachine
+[X] StartMachine
+[X] RebootMachine
+[X] ResizeMachine
+[ ] CreateMachineSnapshot
+[ ] StartMachineFromSnapshot
+[ ] ListMachineSnapshots
+[ ] GetMachineSnapshot
+[ ] DeleteMachineSnapshot
+[ ] UpdateMachineMetadata
+[ ] GetMachineMetadata
+[ ] DeleteMachineMetadata
+[ ] DeleteAllMachineMetadata
+[ ] AddMachineTags
+[ ] ListMachineTags
+[ ] GetMachineTag
+[ ] DeleteMachineTag
+[ ] DeleteMachineTags
+[X] DeleteMachine
