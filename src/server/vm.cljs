@@ -71,9 +71,8 @@
    (wrap-callback callback)))
 
 ;  "delete(uuid, callback)"
-(defn delete [uuid callback]
-  (.delete
-   VM
+(defn del [uuid callback]
+  (js/server.vm.VM.delete
    (clj->js uuid)
    (wrap-callback callback)))
 

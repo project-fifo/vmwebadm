@@ -39,24 +39,24 @@
            ["POST" [account "machines" uuid] {"action" "start"}]
            (machines.start/handle resource request response uuid)
 #_(
- ["PUT" ["vms"] _]
-   (http/with-reqest-body request response
-     (fn [data]
-       (vm/create
-        data
-        default-callback)))
-   ["GET" ["vms" uuid] _]
-     (vm/lookup uuid default-callback)
-     ["DELETE" ["vms" uuid]]
-       (vm/delete uuid default-callback)
-       ["POST" ["vms" uuid]]
-         (http/with-reqest-body request response
-           (fn [data]
-             (condp = (data "state")
-               "off" (vm/start uuid (fn []))
-               "started" (vm/stop uuid (fn [])))
-             (vm/update
-              uuid
-              (dissoc data "state")
-              default-callback))))
-           [_ p _]    (http/response-text response (str "Uhh can't find that" (pr-str response))))))
+   ["PUT" ["vms"] _]
+     (http/with-reqest-body request response
+       (fn [data]
+         (vm/create
+          data
+          default-callback)))
+     ["GET" ["vms" uuid] _]
+       (vm/lookup uuid default-callback)
+       ["DELETE" ["vms" uuid]]
+         (vm/delete uuid default-callback)
+         ["POST" ["vms" uuid]]
+           (http/with-reqest-body request response
+             (fn [data]
+               (condp = (data "state")
+                 "off" (vm/start uuid (fn []))
+                 "started" (vm/stop uuid (fn [])))
+               (vm/update
+                uuid
+                (dissoc data "state")
+                default-callback))))
+[_ p _]    (http/response-text response (str "Uhh can't find that" (pr-str response))))))
