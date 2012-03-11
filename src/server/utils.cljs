@@ -1,4 +1,5 @@
-(ns server.utils)
+(ns server.utils
+  (:require [clojure.string :as c.s]))
 
 (defn clj->js
   "Recursively transforms ClojureScript maps into Javascript objects,
@@ -32,3 +33,10 @@
 
 (defn prn [form]
   (print "prn>" (pr-str form) "\n"))
+
+(defn nestify-map [map]
+  (reduce
+   (fn [m [k v]]
+     (assoc-in m (c.s/split k #"\.") v))
+   {}
+   map))

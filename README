@@ -8,6 +8,10 @@ To get started run make bootstrap, adjust the DEPLOY_* parameters in the makefil
 
 Currently (mostly) supported API/tools:
 
-ListMachines / sdc-listmachines 
+ListMachines / sdc-listmachines
+GetMachines / sdc-getmachine
+StartMachine / sdc-startmachine
+StopMachine / sdc-stopmachine
+CreateMachine / sdc-createmachien - not specs are passed with --metadata spec='<json spec string>'
 
 

@@ -23,7 +23,7 @@
 ;  "stop(uuid, options={[force=true]}, callback)"
 (defn stop
   ([uuid callback]
-     (stop uuid {:force true} callback))
+     (stop uuid {:force false} callback))
   ([uuid options callback]
       (.stop
        VM

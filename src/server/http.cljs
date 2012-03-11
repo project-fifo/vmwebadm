@@ -1,5 +1,5 @@
 (ns server.http
-  (:use [server.utils :only [clj->js prn-js clj->json]]))
+  (:use [server.utils :only [clj->js prn-js clj->json nestify-map]]))
 
 (defn write [response code headers content]
   (.writeHead response code (clj->js headers))
@@ -40,7 +40,7 @@
 (defn res-ext [ext]
   (get ext-map ext res-json))
 
-(defn with-reqest-body [request response callback]
+(defn with-reqest-body [request callback]
   (let [body (atom "")]
     (.on request "data"
          (fn [data]
@@ -49,5 +49,5 @@
          (fn []
            (let [r (if (= @body "")
                      {}
-                     (js->clj (.parse js/JSON @body)))]
+                     (nestify-map (js->clj (.parse js/JSON @body))))]
              (callback r ))))))
