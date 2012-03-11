@@ -8,11 +8,11 @@
             [server.machines.del :as machines.del]
             [server.machines.reboot :as machines.reboot]
             [server.machines.resize :as machines.resize]
+            [server.packages.list :as packages.list]
+            [server.packages.get :as packages.get]
             [server.http :as http])
   (:use [server.utils :only [clj->js prn-js clj->json]])
   (:use-macros [clojure.core.match.js :only [match]]))
-
-
 
 (defn dispatch [resource request response]
   (let [ext (:ext resource)
@@ -45,25 +45,9 @@
            ["POST" [account "machines" uuid] {"action" "resize"}]
            (machines.resize/handle resource request response uuid)
            
-#_(
-   ["PUT" ["vms"] _]
-     (http/with-reqest-body request response
-       (fn [data]
-         (vm/create
-          data
-          default-callback)))
-     ["GET" ["vms" uuid] _]
-       (vm/lookup uuid default-callback)
-       ["DELETE" ["vms" uuid]]
-         (vm/delete uuid default-callback)
-         ["POST" ["vms" uuid]]
-           (http/with-reqest-body request response
-             (fn [data]
-               (condp = (data "state")
-                 "off" (vm/start uuid (fn []))
-                 "started" (vm/stop uuid (fn [])))
-               (vm/update
-                uuid
-                (dissoc data "state")
-                default-callback))))
-[_ p _]    (http/response-text response (str "Uhh can't find that" (pr-str response))))))
+           ["GET" [account "packages"] _]
+           (packages.list/handle resource request response)
+           ["GET" [account "packages" name] _]
+           (packages.get/handle resource request response name)
+           
+           [_ p _]    (http/response-text response (str "Uhh can't find that" (pr-str response))))))

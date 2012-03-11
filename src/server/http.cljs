@@ -15,6 +15,11 @@
               {"Content-Type" "application/json"}
               (clj->json {:error error})))
 
+(defn not-found [response]
+  (write response 404
+              {"Content-Type" "application/json"}
+              (clj->json {:error "not found"})))
+
 (defn respond [content-type formater res content]
   (write res 200 {"Content-Type" content-type}
          (formater (or content ""))))

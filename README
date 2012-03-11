@@ -8,6 +8,7 @@ To get started run make bootstrap, adjust the DEPLOY_* parameters in the makefil
 
 Note the account part is just grouping machines by the owner_uuid right now.
 
+
 Currently (mostly) supported API/tools:
 
 ListMachines / sdc-listmachines
@@ -36,9 +37,15 @@ sdc-createmachine --url http://192.168.155.139 --account heinz \
 --dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
 --package small
 
-
 ResizeMachine / sdc-resizemachine - update spec passed as package!
 sdc-resizemachine --url http://192.168.155.139 --account heinz --package '{"max_physical_memory":128}' 54e85ffa-988c-47b3-90f1-9ee5c23a8849
+
+
+ListPackages / sdc-listpackages
+sdc-listpackages --account licenser --url http://192.168.155.139
+
+GetPackages / sdc-getoacjage
+sdc-getoacjage --account licenser --url http://192.168.155.139 small
 
 
 
