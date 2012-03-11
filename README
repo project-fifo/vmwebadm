@@ -6,37 +6,39 @@ To use tools like SmartDC CLI (http://wiki.joyentcloud.com/display/jpc2/About+Us
 
 To get started run make bootstrap, adjust the DEPLOY_* parameters in the makefile and run make deploy, this will build the project and scp it to your host. The Port and listen address can currently only be confiugred in the src/server/core.cljs file.
 
+Note the account part is just grouping machines by the owner_uuid right now.
+
 Currently (mostly) supported API/tools:
 
 ListMachines / sdc-listmachines
-sdc-listmachines --url http://192.168.155.139 --account bla --metadata.bla=blubb
+sdc-listmachines --url http://192.168.155.139 --account heinz --metadata.bla=blubb
 
 GetMachines / sdc-getmachine
-sdc-getmachine --url http://192.168.155.139 --account bla 54e85ffa-988c-47b3-90f1-9ee5c23a8849
+sdc-getmachine --url http://192.168.155.139 --account heinz 54e85ffa-988c-47b3-90f1-9ee5c23a8849
 
 StartMachine / sdc-startmachine
-sdc-startmachine --url http://192.168.155.139 --account bla 40e06b7a-314a-4028-a328-84619c47fc68
+sdc-startmachine --url http://192.168.155.139 --account heinz 40e06b7a-314a-4028-a328-84619c47fc68
 
 StopMachine / sdc-stopmachine
-sdc-stopmachine --url http://192.168.155.139 --account bla 40e06b7a-314a-4028-a328-84619c47fc68
+sdc-stopmachine --url http://192.168.155.139 --account heinz 40e06b7a-314a-4028-a328-84619c47fc68
 
 RebootMachine / sdc-rebootmachien
-sdc-rebootmachine --url http://192.168.155.139 --account bla 40e06b7a-314a-4028-a328-84619c47fc68
+sdc-rebootmachine --url http://192.168.155.139 --account heinz 40e06b7a-314a-4028-a328-84619c47fc68
 
 DeleteMachine / sdc-deletemachine
-sdc-deletemachine --account bla --url http://192.168.155.139 5a749276-9b9f-44b3-83c4-5965a7525646
+sdc-deletemachine --account heinz --url http://192.168.155.139 5a749276-9b9f-44b3-83c4-5965a7525646
 
 CreateMachine / sdc-createmachien - spec passed as package or packages defined in db.js!
-sdc-createmachine --url http://192.168.155.139 --account bla \
+sdc-createmachine --url http://192.168.155.139 --account heinz \
 --dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
 --package '{"brand": "joyent","zfs_io_priority": 30,"quota": 20,"nowait": true,"max_physical_memory": 256,"alias": "zone4","nics": [{"nic_tag": "external","ip": "dhcp"}]}'
-sdc-createmachine --url http://192.168.155.139 --account bla \
+sdc-createmachine --url http://192.168.155.139 --account heinz \
 --dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
 --package small
 
 
 ResizeMachine / sdc-resizemachine - update spec passed as package!
-sdc-resizemachine --url http://192.168.155.139 --account bla --package '{"max_physical_memory":128}' 54e85ffa-988c-47b3-90f1-9ee5c23a8849
+sdc-resizemachine --url http://192.168.155.139 --account heinz --package '{"max_physical_memory":128}' 54e85ffa-988c-47b3-90f1-9ee5c23a8849
 
 
 

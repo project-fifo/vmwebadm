@@ -29,9 +29,9 @@
            (http/response-text response "root")
 
            ["GET" [account "machines"] _]
-           (machines.list/handle resource request response)
+           (machines.list/handle resource request response account)
            ["POST" [account "machines"] _]
-           (machines.create/handle resource request response)
+           (machines.create/handle resource request response account)
            ["GET" [account "machines" uuid] _]
            (machines.get/handle resource request response uuid)
            ["DELETE" [account "machines" uuid] _]

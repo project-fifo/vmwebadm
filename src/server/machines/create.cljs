@@ -28,12 +28,12 @@
           (assoc spec "dataset_uuid" dataset))
         spec))))
 
-(defn handle [resource request response]
+(defn handle [resource request response login]
   (http/with-reqest-body request
     (fn [data]
       (if-let [spec (build-spec data)]
         (vm/create
-         spec
+         (assoc spec "owner_uuid" login)
          (fn [error vm]
            (if error
              (http/error response error)

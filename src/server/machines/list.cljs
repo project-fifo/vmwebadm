@@ -39,11 +39,11 @@
    "zfs_filesystem" "dataset" 
    })
 
-(defn handle [resource request response]
+(defn handle [resource request response account]
   (let [qry (:query resource)
         q (transform-keys qry-map qry)]
     (vm/lookup
-     q
+     (assoc  q "owner_uuid" account)
      {:full true}
      (fn [error vms]
        (if error
