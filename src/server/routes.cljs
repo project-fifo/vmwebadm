@@ -6,6 +6,8 @@
             [server.machines.create :as machines.create]
             [server.machines.start :as machines.start]
             [server.machines.del :as machines.del]
+            [server.machines.reboot :as machines.reboot]
+            [server.machines.resize :as machines.resize]
             [server.http :as http])
   (:use [server.utils :only [clj->js prn-js clj->json]])
   (:use-macros [clojure.core.match.js :only [match]]))
@@ -38,6 +40,11 @@
            (machines.stop/handle resource request response uuid)
            ["POST" [account "machines" uuid] {"action" "start"}]
            (machines.start/handle resource request response uuid)
+           ["POST" [account "machines" uuid] {"action" "reboot"}]
+           (machines.reboot/handle resource request response uuid)
+           ["POST" [account "machines" uuid] {"action" "resize"}]
+           (machines.resize/handle resource request response uuid)
+           
 #_(
    ["PUT" ["vms"] _]
      (http/with-reqest-body request response
