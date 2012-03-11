@@ -9,9 +9,23 @@ To get started run make bootstrap, adjust the DEPLOY_* parameters in the makefil
 Currently (mostly) supported API/tools:
 
 ListMachines / sdc-listmachines
+sdc-listmachines --url http://192.168.155.139 --account bla --metadata.bla=blubb
+
 GetMachines / sdc-getmachine
+sdc-getmachine --url http://192.168.155.139 --account bla 54e85ffa-988c-47b3-90f1-9ee5c23a8849
+
 StartMachine / sdc-startmachine
+sdc-startmachine --url http://192.168.155.139 --account bla 40e06b7a-314a-4028-a328-84619c47fc68
+
 StopMachine / sdc-stopmachine
-CreateMachine / sdc-createmachien - not specs are passed with --metadata spec='<json spec string>'
+sdc-stopmachine --url http://192.168.155.139 --account bla 40e06b7a-314a-4028-a328-84619c47fc68
+
+DeleteMachine / sdc-deletemachine
+sdc-deletemachine --account bla --url http://192.168.155.139 5a749276-9b9f-44b3-83c4-5965a7525646
+
+CreateMachine / sdc-createmachien - spec passed as package!
+sdc-createmachine --url http://192.168.155.139 --account bla \
+--dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
+--package '{"brand": "joyent","zfs_io_priority": 30,"quota": 20,"nowait": true,"max_physical_memory": 256,"alias": "zone4","nics": [{"nic_tag": "external","ip": "dhcp"}]}'
 
 
