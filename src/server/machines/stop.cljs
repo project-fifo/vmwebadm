@@ -4,7 +4,6 @@
             [server.http :as http]))
 
 (defn handle [resource request response uuid]
-  (print "stop!\n")
   (vm/stop
    uuid
    (fn [error _]

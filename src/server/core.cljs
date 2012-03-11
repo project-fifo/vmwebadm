@@ -5,7 +5,6 @@
             [clojure.string :as c.s]
             [cljs.nodejs :as node]))
 
-(def *debug* true)
 (def http
   (node/require "http"))
 
@@ -32,10 +31,6 @@
     return))
 
 (defn handler [req res]
-  (if *debug*
-    (print "url:" (.-url req)
-           "method:" (.-method req)
-           "query:" (.-query req)))
   (routes/dispatch
    (parse-url req)
    req
@@ -46,6 +41,6 @@
         port 80
         host "0.0.0.0"]
     (.listen server port host)
-    (println "Server running at http://127.0.0.1:1337/")))
+    (println "Server running at" (str "http//" host ":" port "/"))))
 
 (set! *main-cli-fn* start)
