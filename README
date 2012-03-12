@@ -48,9 +48,19 @@ GetPackages / sdc-getoacjage
 sdc-getoacjage --account licenser --url http://192.168.155.139 small
 
 
+
 For setup: Not that username and password are currently not checked!
 
-sdc-setup  --url http://192.168.155.139
+on the server run for each user:
+./client.sh passwd <your user> <your pass>
+
+on the cients run for each user:
+sdc-setup --url http://<SmartOS IP>
+Username (login): (<your user>) <your user> 
+Password: <your pass>
+
+
+
 
 API Overview
 

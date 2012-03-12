@@ -1,7 +1,11 @@
 (ns server.http
   (:require [clojure.string :as c.s]
-            [server.storage :as storage])
+            [server.storage :as storage]
+            [cljs.nodejs :as node])
   (:use [server.utils :only [clj->js prn-js clj->json nestify-map base64-decode hash-str]]))
+
+(def http-signature
+  (node/require "http-signature"))
 
 (defn write [response code headers content]
   (.writeHead response code (clj->js headers))
@@ -74,3 +78,23 @@
       (f)
       (error response 401 "bad password or user"))
     (error response 401 "auth header missing")))
+
+(defn with-auth [resource request response account f]
+  (try
+    (let [parsed  (.parseRequest http-signature request)
+          path (next (c.s/split (.-keyId parsed) #"/"))
+          pki-account (first path)
+          path (concat ["users"] path)]
+      (if (= account pki-account) 
+        (if-let [pub (get-in @storage/data path)]
+          (if (.verifySignature http-signature parsed pub)
+            (f)
+            (http/error res 401 "verification failed"))
+          (http/error res 401 "key not found"))
+        (http/error res 401 "wrong pki user")))
+    (catch js/Error e
+      (try
+        (with-passwd-auth resource response account f)
+        (catch js/Error e
+          (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
+          (http/error res (http/encode-error "Error during not logged in dispatch." e)))))))

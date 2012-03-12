@@ -32,32 +32,44 @@
            (http/response-text response "root")
 
            ["GET" [account "keys"] _]
-           (keys.list/handle resource request response account)
+           (http/with-auth resource request response account 
+             #(keys.list/handle resource request response account))
 
            ["POST" [account "keys"] _]
-           (keys.add/handle resource request response account)
+           (http/with-auth resource request response account
+             #(keys.add/handle resource request response account))
            
            
            ["GET" [account "machines"] _]
-           (machines.list/handle resource request response account)
+           (http/with-auth resource request response account
+             #(machines.list/handle resource request response account))
            ["POST" [account "machines"] _]
-           (machines.create/handle resource request response account)
+           (http/with-auth resource request response account
+             #(machines.create/handle resource request response account))
            ["GET" [account "machines" uuid] _]
-           (machines.get/handle resource request response uuid)
+           (http/with-auth resource request response account
+             #(machines.get/handle resource request response uuid))
            ["DELETE" [account "machines" uuid] _]
-           (machines.del/handle resource request response uuid)
+           (http/with-auth resource request response account
+             #(machines.del/handle resource request response uuid))
            ["POST" [account "machines" uuid] {"action" "stop"}]
-           (machines.stop/handle resource request response uuid)
+           (http/with-auth resource request response account
+             #(machines.stop/handle resource request response uuid))
            ["POST" [account "machines" uuid] {"action" "start"}]
-           (machines.start/handle resource request response uuid)
+           (http/with-auth resource request response account
+             #(machines.start/handle resource request response uuid))
            ["POST" [account "machines" uuid] {"action" "reboot"}]
-           (machines.reboot/handle resource request response uuid)
+           (http/with-auth resource request response account
+             #(machines.reboot/handle resource request response uuid))
            ["POST" [account "machines" uuid] {"action" "resize"}]
-           (machines.resize/handle resource request response uuid)
+           (http/with-auth resource request response account
+             #(machines.resize/handle resource request response uuid))
            
            ["GET" [account "packages"] _]
-           (packages.list/handle resource request response)
+           (http/with-auth resource request response account
+             #(packages.list/handle resource request response))
            ["GET" [account "packages" name] _]
-           (packages.get/handle resource request response name)
+           (http/with-auth resource request response account
+             #(packages.get/handle resource request response name))
            
            [_ p _]    (http/response-text response (str "Uhh can't find that" (pr-str response))))))
