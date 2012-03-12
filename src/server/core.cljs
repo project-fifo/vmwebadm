@@ -64,10 +64,11 @@
        res))))
 
 (defn start [& _]
+  (storage/init)
   (let [server (.createServer http handler)
-        port 80
-        host "0.0.0.0"]
-    (storage/init)
+        port (get-in @storage/data ["server" "port"] 80)
+        host (get-in @storage/data ["server" "host"] "0.0.0.0")]
+
     (.listen server port host)
     (println "Server running at" (str "http//" host ":" port "/"))))
 
