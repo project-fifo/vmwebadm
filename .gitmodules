@@ -1,3 +1,15 @@
 [submodule "clojurescript"]
 	path = clojurescript
 	url = git://github.com/clojure/clojurescript.git
+[submodule "jslib/http-signature"]
+	path = jslib/http-signature
+	url = git://github.com/joyent/node-http-signature.git
+[submodule "jslib/sprintf"]
+	path = jslib/sprintf
+	url = git://github.com/maritz/node-sprintf.git
+[submodule "jslib/ctype"]
+	path = jslib/ctype
+	url = git://github.com/rmustacc/node-ctype.git
+[submodule "jslib/asn1"]
+	path = jslib/asn1
+	url = git://github.com/mcavage/node-asn1.git

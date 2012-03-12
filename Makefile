@@ -11,6 +11,7 @@ all: server
 bootstrap:
 	git submodule init
 	git submodule update
+	cp db.js.example db.js
 	cd clojurescript/ && git checkout r971; 
 	cd clojurescript/ && ./script/bootstrap
 	cp lib/* clojurescript/lib/
@@ -37,4 +38,4 @@ client:
           :output-dir "out/client" :output-to "out/client/client.js"}'
 
 deploy: all
-	scp -r start.sh db.js out/* $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
+	scp -r start.sh db.js.example jslib out/* $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)

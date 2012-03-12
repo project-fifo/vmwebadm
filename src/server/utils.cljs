@@ -1,5 +1,9 @@
 (ns server.utils
-  (:require [clojure.string :as c.s]))
+  (:require
+   [cljs.nodejs :as node]
+   [clojure.string :as c.s]))
+
+(def crypto (node/require "crypto"))
 
 (defn clj->js
   "Recursively transforms ClojureScript maps into Javascript objects,

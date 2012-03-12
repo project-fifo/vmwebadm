@@ -10,11 +10,14 @@
             [server.machines.resize :as machines.resize]
             [server.packages.list :as packages.list]
             [server.packages.get :as packages.get]
+            [server.keys.list :as keys.list]
+            [server.keys.add :as keys.add]
             [server.http :as http])
   (:use [server.utils :only [clj->js prn-js clj->json]])
   (:use-macros [clojure.core.match.js :only [match]]))
 
 (defn dispatch [resource request response]
+  (print (pr-str resource) "\n")
   (let [ext (:ext resource)
         method (:method resource)
         path (:resource resource)
@@ -28,6 +31,13 @@
            [_ [""] _]
            (http/response-text response "root")
 
+           ["GET" [account "keys"] _]
+           (keys.list/handle resource request response account)
+
+           ["POST" [account "keys"] _]
+           (keys.add/handle resource request response account)
+           
+           
            ["GET" [account "machines"] _]
            (machines.list/handle resource request response account)
            ["POST" [account "machines"] _]

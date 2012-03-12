@@ -10,10 +10,13 @@
               {"Content-Type" "application/json"}
               "{\"result\": \"ok\"}"))
 
-(defn error [response error]
-  (write response 500
-              {"Content-Type" "application/json"}
-              (clj->json {:error error})))
+(defn error
+  ([response e]
+     (error response 500 e))
+  ([response code e]
+     (write response code
+            {"Content-Type" "application/json"}
+            (clj->json {:error e}))))
 
 (defn not-found [response]
   (write response 404
