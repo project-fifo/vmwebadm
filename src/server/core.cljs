@@ -74,6 +74,6 @@
         host (get-in @storage/data ["server" "host"] "0.0.0.0")]
 
     (.listen server port host)
-    (println "Server running at" (str "http//" host ":" port "/"))))
+    (println "Server running at" (str "http://" host ":" port "/"))))
 
 (set! *main-cli-fn* start)

@@ -2,6 +2,9 @@
   (:use-macros [clojure.core.match.js :only [match]])
   (:require [cljs.nodejs :as node]))
 
+(def fs (node/require "fs"))
+(def crypto (node/require "crypto"))
+
 (defn clj->js
   "Recursively transforms ClojureScript maps into Javascript objects,
    other ClojureScript colls into JavaScript arrays, and ClojureScript
@@ -18,12 +21,14 @@
 (defn clj->json [c]
   (.stringify js/JSON (clj->js c)))
 
-(def fs (node/require "fs"))
 
 (defn update-config [update-fn]
-  (.writeFileSync fs "db.js" (clj->json (update-fn (js->clj (.parse js/JSON (.readFileSync fs "db.js"))))))
-  )
+  (.writeFileSync fs "db.js" (clj->json (update-fn (js->clj (.parse js/JSON (.readFileSync fs "db.js")))))))
 
+(defn hash-str [str]
+  (-> ( .createHash crypto "sha512")
+      (.update str)
+      (.digest "base64")))
 
 (defn help []
   (print "Configuration tool\n"
@@ -31,11 +36,9 @@
                 " port <port>            - sets the listen port for the server.\n"
                 " host <host>            - sets the listen host for the server.\n"))
 (defn start [& args]
-  (pr args)
-  (print "\n")
   (match [(vec args)]
          [["passwd" user passwd]]
-         (update-config #(assoc-in % ["users" "users" user "passwd"] passwd))
+         (update-config #(assoc-in % ["users" user "passwd"] (hash-str (str user ":" passwd))))
          [["port" port]]
          (update-config #(assoc-in % ["server" "port"] (js/parseInt port)))
          [["host" host]]

@@ -1,5 +1,7 @@
 (ns server.http
-  (:use [server.utils :only [clj->js prn-js clj->json nestify-map]]))
+  (:require [clojure.string :as c.s]
+            [server.storage :as storage])
+  (:use [server.utils :only [clj->js prn-js clj->json nestify-map base64-decode hash-str]]))
 
 (defn write [response code headers content]
   (.writeHead response code (clj->js headers))
@@ -64,3 +66,11 @@
                      {}
                      (nestify-map (js->clj (.parse js/JSON @body))))]
              (callback r ))))))
+
+(defn with-passwd-auth [resource response account f]
+  (if-let [h (second (c.s/split (get-in resource [:headers "authorization"] "") #" "))]
+    (if (= (hash-str (base64-decode h))
+           (get-in @storage/data ["users" account "passwd"]))
+      (f)
+      (error response 401 "bad password or user"))
+    (error response 401 "auth header missing")))

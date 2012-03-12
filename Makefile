@@ -6,7 +6,7 @@ DEPLOY_USER=root
 DEPLOY_HOST=192.168.155.139
 DEPLOY_PATH=/zones/server
 
-all: server
+all: server client
 
 bootstrap:
 	git submodule init
@@ -38,4 +38,4 @@ client:
           :output-dir "out/client" :output-to "out/client/client.js"}'
 
 deploy: all
-	scp -r start.sh db.js.example jslib out/* $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
+	scp -r client.sh server.sh db.js.example jslib out/* $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)

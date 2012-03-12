@@ -35,8 +35,19 @@
    {}
    key-map))
 
+(defn base64-decode [s]
+  (->
+   (js/Buffer. s "base64")
+   (.toString "ascii")))
+
 (defn prn [form]
   (print "prn>" (pr-str form) "\n"))
+
+
+(defn hash-str [str]
+  (-> ( .createHash crypto "sha512")
+      (.update str)
+      (.digest "base64")))
 
 (defn nestify-map [map]
   (reduce
