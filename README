@@ -48,9 +48,17 @@ GetPackages / sdc-getoacjage
 sdc-getoacjage --account licenser --url http://192.168.155.139 small
 
 
+For setup: Not that username and password are currently not checked!
 
+sdc-setup  --url http://192.168.155.139
 
 API Overview
+
+Keys
+[X] ListKeys
+[ ] GetKey
+[X] CreateKey
+[ ] DeleteKey
 
 
 Packages
