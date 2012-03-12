@@ -88,3 +88,7 @@ Machines
 [ ] DeleteMachineTag
 [ ] DeleteMachineTags
 [X] DeleteMachine
+
+
+ToDo
+* Deploy with sub directory

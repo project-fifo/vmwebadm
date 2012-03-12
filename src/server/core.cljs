@@ -58,10 +58,13 @@
           (http/error res 401 "verification failed"))
         (http/error res 401 "key not found")))
     (catch js/Error e
-      (routes/dispatch
-       (parse-url req)
-       req
-       res))))
+      (try 
+        (routes/dispatch
+         (parse-url req)
+         req
+         res)
+        (catch js/Error e
+          (http/error res (js->clj e)))))))
 
 (defn start [& _]
   (storage/init)
