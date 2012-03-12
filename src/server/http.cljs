@@ -5,6 +5,11 @@
   (.writeHead response code (clj->js headers))
   (.end response content))
 
+(defn encode-error [msg e]
+  {:msg msg
+   :error (.-message e)
+   :stack (.-stack e)})
+
 (defn ok [response]
   (write response 200
               {"Content-Type" "application/json"}
