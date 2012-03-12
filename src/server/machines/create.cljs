@@ -36,6 +36,6 @@
          (assoc spec "owner_uuid" login)
          (fn [error vm]
            (if error
-             (http/error response error)
+             (http/error response (str  "Error in server.machien.create\n" error))
              (http/ok response (.stringify js/JSON  vm)))))
         (http/error response (clj->json  {:error "Package not found"}))))))

@@ -64,7 +64,12 @@
          req
          res)
         (catch js/Error e
-          (http/error res (js->clj e)))))))
+          (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
+          (http/error res (str "Error during not logged in dispatch\n" (pr-str
+                                                                        {:error (.-message e)
+                                                                         :stack (.-stack e)
+                                                                         }
+                                                                         ))))))))
 
 (defn start [& _]
   (storage/init)
