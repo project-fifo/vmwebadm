@@ -4,3 +4,4 @@ out/client/*
 out/server/*
 .#*
 db.js
+release

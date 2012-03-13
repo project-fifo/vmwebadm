@@ -4,7 +4,7 @@ CLIENT_FILES=src/client/
 CLJSC_CP=lib/*:
 DEPLOY_USER=root
 DEPLOY_HOST=192.168.155.139
-DEPLOY_PATH=/zones/server
+DEPLOY_PATH=/zones
 
 all: server client
 
@@ -16,7 +16,7 @@ bootstrap:
 	cd clojurescript/ && ./script/bootstrap
 	cp lib/* clojurescript/lib/
 
-clean: clean-server clean-client
+clean: clean-server clean-client clean-release
 
 clean-server:
 	-rm -r out/server/*
@@ -38,4 +38,12 @@ client:
           :output-dir "out/client" :output-to "out/client/client.js"}'
 
 deploy: all
-	scp -r client.sh server.sh db.js.example jslib out/* $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
+	scp -r release $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)/vmwebadmin
+
+clean-release:
+	rm -rf release
+
+release: all clean-release
+	mkdir -p release/js
+	cp out/client/client.js out/server/server.js release/js
+	cp -r client.sh server.sh db.js.example jslib release
