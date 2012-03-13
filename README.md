@@ -40,29 +40,19 @@ Currently supported sdc-commands
 
 ```sh
 sdc-listmachines
-
 sdc-getmachine 54e85ffa-988c-47b3-90f1-9ee5c23a8849
-
 sdc-startmachine 40e06b7a-314a-4028-a328-84619c47fc68
-
 sdc-stopmachine 40e06b7a-314a-4028-a328-84619c47fc68
-
 sdc-rebootmachine 40e06b7a-314a-4028-a328-84619c47fc68
-
 sdc-deletemachine 5a749276-9b9f-44b3-83c4-5965a7525646
-
 sdc-createmachine \
 --dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
 --package '{"brand": "joyent","zfs_io_priority": 30,"quota": 20,"nowait": true,"max_physical_memory": 256,"alias": "zone4","nics": [{"nic_tag": "external","ip": "dhcp"}]}'
-
 sdc-createmachine \
 --dataset 31bc4dbe-5e06-11e1-907c-5bed6b255fd1 \
 --package small
-
 sdc-resizemachine --package '{"max_physical_memory":128}' 54e85ffa-988c-47b3-90f1-9ee5c23a8849
-
 sdc-listpackages
-
 sdc-getoackage
 ```
 
@@ -71,19 +61,24 @@ API Overview
 
 Keys
 ----
+```plaintext
 [X] ListKeys
 [ ] GetKey
 [X] CreateKey
 [ ] DeleteKey
+```
 
 
 Packages
 --------
+```text
 [X] ListPackages
 [X] GetPackage
+```
 
 Machines
 --------
+```plaintext
 [X] ListMachines
 [X] GetMachine
 [X] CreateMachine
@@ -106,3 +101,4 @@ Machines
 [ ] DeleteMachineTag
 [ ] DeleteMachineTags
 [X] DeleteMachine
+```
