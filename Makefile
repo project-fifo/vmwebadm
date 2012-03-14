@@ -5,6 +5,7 @@ CLJSC_CP=lib/*:
 DEPLOY_USER=root
 DEPLOY_HOST=192.168.155.139
 DEPLOY_PATH=/zones
+RELEASE_NAME=vmwebadm
 
 all: server client
 
@@ -37,13 +38,13 @@ client:
 	'{:optimizations :simple :pretty-print true :target :nodejs\
           :output-dir "out/client" :output-to "out/client/client.js"}'
 
-deploy: all
-	scp -r release $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)/vmwebadmin
+deploy: release all
+	scp -r $(RELEASE_NAME) $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
 
 clean-release:
-	rm -rf release
+	[ -d $(RELEASE_NAME) ] && rm -rf $(RELEASE_NAME) || true
 
 release: all clean-release
-	mkdir -p release/js
-	cp out/client/client.js out/server/server.js release/js
-	cp -r client.sh server.sh db.js.example jslib release
+	mkdir -p $(RELEASE_NAME)/js
+	cp out/client/client.js out/server/server.js $(RELEASE_NAME)/js
+	cp -r client.sh server.sh db.js.example jslib $(RELEASE_NAME)

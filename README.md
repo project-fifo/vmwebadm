@@ -95,10 +95,10 @@ Machines
 [ ] GetMachineMetadata
 [ ] DeleteMachineMetadata
 [ ] DeleteAllMachineMetadata
-[ ] AddMachineTags
-[ ] ListMachineTags
-[ ] GetMachineTag
-[ ] DeleteMachineTag
-[ ] DeleteMachineTags
+[X] AddMachineTags
+[X] ListMachineTags
+[X] GetMachineTag
+[X] DeleteMachineTag
+[X] DeleteMachineTags
 [X] DeleteMachine
 ```

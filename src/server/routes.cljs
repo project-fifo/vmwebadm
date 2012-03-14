@@ -8,6 +8,13 @@
             [server.machines.del :as machines.del]
             [server.machines.reboot :as machines.reboot]
             [server.machines.resize :as machines.resize]
+
+            [server.machines.tags.list :as tags.list]
+            [server.machines.tags.get :as tags.get]
+            [server.machines.tags.add :as tags.add]
+            [server.machines.tags.del :as tags.del]
+            [server.machines.tags.del_all :as tags.del_all]
+            
             [server.packages.list :as packages.list]
             [server.packages.get :as packages.get]
             [server.keys.list :as keys.list]
@@ -17,7 +24,7 @@
   (:use-macros [clojure.core.match.js :only [match]]))
 
 (defn dispatch [resource request response]
-  (print (pr-str resource) "\n")
+  (print "resource:" (pr-str resource) "\n")
   (let [ext (:ext resource)
         method (:method resource)
         path (:resource resource)
@@ -32,44 +39,96 @@
            (http/response-text response "root")
 
            ["GET" [account "keys"] _]
-           (http/with-auth resource request response account 
-             #(keys.list/handle resource request response account))
+           (do
+             (print "keys.list" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(keys.list/handle resource request response account)))
 
            ["POST" [account "keys"] _]
-           (http/with-auth resource request response account
-             #(keys.add/handle resource request response account))
+           (do
+             (print "keys.add" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(keys.add/handle resource request response account)))
            
-           
+           ["GET" [account "machines" uuid "tags"] _]
+           (do
+             (print "machines.tags.list" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(tags.list/handle resource request response account uuid)))
            ["GET" [account "machines"] _]
-           (http/with-auth resource request response account
-             #(machines.list/handle resource request response account))
+           (do
+             (print "machines.list" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.list/handle resource request response account)))
            ["POST" [account "machines"] _]
-           (http/with-auth resource request response account
-             #(machines.create/handle resource request response account))
+           (do
+             (print "machines.create" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.create/handle resource request response account)))
            ["GET" [account "machines" uuid] _]
-           (http/with-auth resource request response account
-             #(machines.get/handle resource request response uuid))
+           (do
+             (print "machines.get" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.get/handle resource request response uuid)))
            ["DELETE" [account "machines" uuid] _]
-           (http/with-auth resource request response account
-             #(machines.del/handle resource request response uuid))
+           (do
+             (print "machines.del" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.del/handle resource request response uuid)))
            ["POST" [account "machines" uuid] {"action" "stop"}]
-           (http/with-auth resource request response account
-             #(machines.stop/handle resource request response uuid))
+           (do
+             (print "machines.stop" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.stop/handle resource request response uuid)))
            ["POST" [account "machines" uuid] {"action" "start"}]
-           (http/with-auth resource request response account
-             #(machines.start/handle resource request response uuid))
+           (do
+             (print "machines.start" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.start/handle resource request response uuid)))
            ["POST" [account "machines" uuid] {"action" "reboot"}]
-           (http/with-auth resource request response account
-             #(machines.reboot/handle resource request response uuid))
+           (do
+             (print "machines.reboot" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.reboot/handle resource request response uuid)))
            ["POST" [account "machines" uuid] {"action" "resize"}]
-           (http/with-auth resource request response account
-             #(machines.resize/handle resource request response uuid))
+           (do
+             (print "machines.resize" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.resize/handle resource request response uuid)))
+           
+           ["GET" [account "machines" uuid "tags" tag] _]
+           (do
+             (print "machines.tags.get" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(tags.get/handle resource request response account uuid tag)))
+           ["POST" [account "machines" uuid "tags"] _]
+           (do
+             (print "machines.tags.add" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(tags.add/handle resource request response account uuid)))
+           ["DELETE" [account "machines" uuid "tags"] _]
+           (do
+             (print "machines.tags.del_all" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(tags.del_all/handle resource request response account uuid)))
+           ["DELETE" [account "machines" uuid "tags" tag] _]
+           (do
+             (print "machines.tags.del" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(tags.del/handle resource request response account uuid tag)))
+
            
            ["GET" [account "packages"] _]
-           (http/with-auth resource request response account
-             #(packages.list/handle resource request response))
+           (do
+             (print "packages.list" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(packages.list/handle resource request response)))
            ["GET" [account "packages" name] _]
-           (http/with-auth resource request response account
-             #(packages.get/handle resource request response name))
+           (do
+             (print "packages.get" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(packages.get/handle resource request response name)))
            
-           [_ p _]    (http/response-text response (str "Uhh can't find that" (pr-str response))))))
+           [_ p _]    (http/write response 200
+                                  {"Content-Type" "application/json"}
+                                  (clj->json (str "Uhh can't find that" (pr-str response)))))))

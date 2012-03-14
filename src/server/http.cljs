@@ -94,6 +94,7 @@
         (http/error res 401 "wrong pki user")))
     (catch js/Error e
       (try
+        (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
         (with-passwd-auth resource response account f)
         (catch js/Error e
           (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
