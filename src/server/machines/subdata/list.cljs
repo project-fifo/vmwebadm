@@ -1,10 +1,9 @@
-(ns server.machines.tags.list
+(ns server.machines.subdata.list
   (:use [server.utils :only [clj->js prn-js clj->json transform-keys prn]])
   (:require [server.vm :as vm]
             [server.http :as http]))
 
-(defn handle [resource request response account uuid]
-  (print uuid "-" account "\n")
+(defn handle [key resource request response account uuid]
   (vm/lookup
    {"uuid" uuid
     "owner_uuid" account}
@@ -14,4 +13,4 @@
        (http/error response error)
        (http/write response 200
                    {"Content-Type" "application/json"}
-                   (clj->json ((first vms) "tags")))))))
+                   (clj->json ((first vms) key)))))))

@@ -9,11 +9,11 @@
             [server.machines.reboot :as machines.reboot]
             [server.machines.resize :as machines.resize]
 
-            [server.machines.tags.list :as tags.list]
-            [server.machines.tags.get :as tags.get]
-            [server.machines.tags.add :as tags.add]
-            [server.machines.tags.del :as tags.del]
-            [server.machines.tags.del_all :as tags.del_all]
+            [server.machines.subdata.list :as subdata.list]
+            [server.machines.subdata.get :as subdata.get]
+            [server.machines.subdata.add :as subdata.add]
+            [server.machines.subdata.del :as subdata.del]
+            [server.machines.subdata.del_all :as subdata.del_all]
             
             [server.packages.list :as packages.list]
             [server.packages.get :as packages.get]
@@ -43,18 +43,12 @@
              (print "keys.list" (pr-str path) "\n")
              (http/with-auth resource request response account 
                #(keys.list/handle resource request response account)))
-
            ["POST" [account "keys"] _]
            (do
              (print "keys.add" (pr-str path) "\n")
              (http/with-auth resource request response account
                #(keys.add/handle resource request response account)))
-           
-           ["GET" [account "machines" uuid "tags"] _]
-           (do
-             (print "machines.tags.list" (pr-str path) "\n")
-             (http/with-auth resource request response account
-               #(tags.list/handle resource request response account uuid)))
+
            ["GET" [account "machines"] _]
            (do
              (print "machines.list" (pr-str path) "\n")
@@ -95,28 +89,61 @@
              (print "machines.resize" (pr-str path) "\n")
              (http/with-auth resource request response account
                #(machines.resize/handle resource request response uuid)))
+
            
+           ["GET" [account "machines" uuid "tags"] _]
+           (do
+             (print "machines.tags.list" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(subdata.list/handle "tags" resource request response account uuid)))
            ["GET" [account "machines" uuid "tags" tag] _]
            (do
              (print "machines.tags.get" (pr-str path) "\n")
              (http/with-auth resource request response account
-               #(tags.get/handle resource request response account uuid tag)))
+               #(subdata.get/handle "tags" resource request response account uuid tag)))
            ["POST" [account "machines" uuid "tags"] _]
            (do
              (print "machines.tags.add" (pr-str path) "\n")
              (http/with-auth resource request response account
-               #(tags.add/handle resource request response account uuid)))
+               #(subdata.add/handle "tags" resource request response account uuid)))
            ["DELETE" [account "machines" uuid "tags"] _]
            (do
              (print "machines.tags.del_all" (pr-str path) "\n")
              (http/with-auth resource request response account
-               #(tags.del_all/handle resource request response account uuid)))
+               #(subdata.del_all/handle "tags" resource request response account uuid)))
            ["DELETE" [account "machines" uuid "tags" tag] _]
            (do
              (print "machines.tags.del" (pr-str path) "\n")
              (http/with-auth resource request response account
-               #(tags.del/handle resource request response account uuid tag)))
+               #(subdata.del/handle "tags" resource request response account uuid tag)))
 
+           ["GET" [account "machines" uuid "metadata"] _]
+           (do
+             (print "machines.metadata.list" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(subdata.list/handle "customer_metadata" resource request response account uuid)))
+           ["GET" [account "machines" uuid "metadata" tag] _]
+           (do
+             (print "machines.metadata.get" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(subdata.get/handle "customer_metadata" resource request response account uuid tag)))
+           ["POST" [account "machines" uuid "metadata"] _]
+           (do
+             (print "machines.metadata.add" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(subdata.add/handle "customer_metadata" resource request response account uuid)))
+           ["DELETE" [account "machines" uuid "metadata"] _]
+           (do
+             (print "machines.metadata.del_all" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(subdata.del_all/handle "customer_metadata" resource request response account uuid)))
+           ["DELETE" [account "machines" uuid "metadata" tag] _]
+           (do
+             (print "machines.metadata.del" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(subdata.del/handle "customer_metadata" resource request response account uuid tag)))
+
+           
            
            ["GET" [account "packages"] _]
            (do

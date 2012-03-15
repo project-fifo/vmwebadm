@@ -91,10 +91,10 @@ Machines
 [ ] ListMachineSnapshots
 [ ] GetMachineSnapshot
 [ ] DeleteMachineSnapshot
-[ ] UpdateMachineMetadata
-[ ] GetMachineMetadata
-[ ] DeleteMachineMetadata
-[ ] DeleteAllMachineMetadata
+[X] UpdateMachineMetadata
+[X] GetMachineMetadata
+[X] DeleteMachineMetadata
+[X] DeleteAllMachineMetadata
 [X] AddMachineTags
 [X] ListMachineTags
 [X] GetMachineTag
