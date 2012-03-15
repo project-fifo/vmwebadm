@@ -25,7 +25,15 @@ On your SmartOS Server
 The default behavior for the server is to listen to 0.0.0.0:80, you can change this with ./client.sh port and host
 
 * Add users as you want with: ./client.sh passwd <your user> <your pass>
-* Start the server with ./server.sh
+
+Make it a service
+-----------------
+
+* run ./vmwebadm install
+
+you can disable the service with ./vmwebadm disable and enable it with ./vmwebadm enable
+
+The service is persistant over reboots!
 
 On your client
 --------------

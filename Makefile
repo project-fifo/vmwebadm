@@ -4,7 +4,7 @@ CLIENT_FILES=src/client/
 CLJSC_CP=lib/*:
 DEPLOY_USER=root
 DEPLOY_HOST=192.168.155.139
-DEPLOY_PATH=/zones
+DEPLOY_PATH=/opt
 RELEASE_NAME=vmwebadm
 
 all: server client
@@ -57,6 +57,7 @@ fix_path:
 release_main:
 	cp out/client/client.js out/server/server.js $(RELEASE_NAME)/js
 	cp -r static/* jslib $(RELEASE_NAME)
+	-rm  $(RELEASE_NAME)/*~
 
 release: clean-release all release_pre release_main fix_path
 
