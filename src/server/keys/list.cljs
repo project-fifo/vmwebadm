@@ -7,4 +7,4 @@
   (http/write response 200
               {"Content-Type" "application/json"}
               (clj->json
-               {"keys" (get-in @storage/data ["users" account "keys"])})))
+               {"keys" (get-in @storage/data [:users account :keys])})))

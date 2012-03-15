@@ -1,6 +1,7 @@
 (ns server.storage
   (:use [server.utils :only [clj->js prn-js clj->json transform-keys]])
-  (:require [cljs.nodejs :as node]))
+  (:require [cljs.nodejs :as node]
+            [cljs.reader :as reader]))
 
 
 (def data (atom {}))
@@ -8,11 +9,10 @@
 (def fs (node/require "fs"))
 
 (defn- slurp [file]
-  (.readFileSync fs file))
-
+  (str (.readFileSync fs file)))
 
 (defn save []
-  (.writeFileSync fs "db.js" (clj->json @data)))
+  (.writeFileSync fs "db.clj" (pr-str @data)))
 
 (defn init []
-  (reset! data (js->clj (.parse js/JSON (slurp "db.js")))))
+  (reset! data (js->clj (reader/read-string (slurp "db.clj")))))

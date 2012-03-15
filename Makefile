@@ -57,9 +57,9 @@ fix_path:
 release_main:
 	cp out/client/client.js out/server/server.js $(RELEASE_NAME)/js
 	cp -r static/* jslib $(RELEASE_NAME)
-	-rm  $(RELEASE_NAME)/*~
+	-find $(RELEASE_NAME) -name "*~" -delete
 
 release: clean-release all release_pre release_main fix_path
 
 zip: release
-	zip vmwebadm.zip vmwebadm
+	tar cvzf vmwebadm-0.1.1-beta.tar.bz2 vmwebadm

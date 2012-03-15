@@ -74,7 +74,7 @@
 (defn with-passwd-auth [resource response account f]
   (if-let [h (second (c.s/split (get-in resource [:headers "authorization"] "") #" "))]
     (if (= (hash-str (base64-decode h))
-           (get-in @storage/data ["users" account "passwd"]))
+           (get-in @storage/data [:users account :passwd]))
       (f)
       (error response 401 "bad password or user"))
     (error response 401 "auth header missing")))
@@ -84,7 +84,8 @@
     (let [parsed  (.parseRequest http-signature request)
           path (next (c.s/split (.-keyId parsed) #"/"))
           pki-account (first path)
-          path (concat ["users"] path)]
+          key (last path)
+          path [:users account :keys key :web]]
       (if (= account pki-account) 
         (if-let [pub (get-in @storage/data path)]
           (if (.verifySignature http-signature parsed pub)

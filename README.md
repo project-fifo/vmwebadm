@@ -38,10 +38,11 @@ The service is persistant over reboots!
 On your client
 --------------
 You can now set up your sdc toos with:
+```bash
 sdc-setup --url http://<SmartOS IP>
 Username (login): (<your user>)
 Password: <your pass>
-
+```
 
 Currently supported sdc-commands
 ============================
@@ -77,9 +78,16 @@ Keys
 ```
 
 
+Datasets
+--------
+```plaintext
+[ ] ListDatasets
+[ ] GetDataset
+```
+
 Packages
 --------
-```text
+```plaintext
 [X] ListPackages
 [X] GetPackage
 ```

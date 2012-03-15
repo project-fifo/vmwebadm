@@ -26,7 +26,8 @@
            (.exec cp
                   cmd
                   (fn [error, stdout, stderr]
-                    (swap! storage/data assoc-in ["users" account "keys" name] stdout)
+                    (swap! storage/data assoc-in [:users account :keys name] {:web stdout
+                                                                              :ssh key})
                     (storage/save)
                     (http/write response 200
                                 {"Content-Type" "application/json"}
