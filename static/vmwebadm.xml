@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+        Copyright 2012 Heinz N. Gies
+-->
+
+<service_bundle type='manifest' name='vmwebadm'>
+  <service
+    name='network/vmwebadm'
+    type='service'
+    version='1'>
+    <create_default_instance enabled='true' />
+    <single_instance />
+    <dependency 
+	name='net-loopback'
+	grouping='require_all'
+	restart_on='none'
+	type='service'>
+      <service_fmri value='svc:/network/loopback' />
+    </dependency>
+    
+    <dependency 
+	name='net-physical'
+	grouping='require_all'
+	restart_on='none'
+	type='service'>
+      <service_fmri value='svc:/network/physical' />
+    </dependency>
+
+    <dependency 
+	name='fs'
+	grouping='require_all' 
+	restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+
+    <exec_method
+      type='method'
+      name='start'
+      exec='!DEPLOY_PATH!/vmwebadm %m'
+      timeout_seconds='30'>
+    </exec_method>
+
+    <exec_method 
+	name='stop' 
+	type='method' 
+	exec=':kill' 
+	timeout_seconds='60'>
+      <method_context/>
+    </exec_method>
+
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>
+          Vmwebadm Service
+        </loctext>
+      </common_name>
+    </template>
+  </service>
+</service_bundle>

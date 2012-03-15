@@ -17,7 +17,7 @@ bootstrap:
 	cd clojurescript/ && ./script/bootstrap
 	cp lib/* clojurescript/lib/
 
-clean: clean-server clean-client clean-release
+clean: clean-server clean-client clean-release clean-zip
 
 clean-server:
 	-rm -r out/server/*
@@ -42,9 +42,23 @@ deploy: release all
 	scp -r $(RELEASE_NAME) $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
 
 clean-release:
-	[ -d $(RELEASE_NAME) ] && rm -rf $(RELEASE_NAME) || true
+	-rm -rf $(RELEASE_NAME)
 
-release: all clean-release
+clean-zip:
+	-rm vmwebadm.zip
+
+release_pre:
 	mkdir -p $(RELEASE_NAME)/js
+
+fix_path:
+	sed -i $(RELEASE_NAME)/vmwebadm.xml -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);'
+	sed -i $(RELEASE_NAME)/vmwebadm -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);'	
+
+release_main:
 	cp out/client/client.js out/server/server.js $(RELEASE_NAME)/js
-	cp -r client.sh server.sh db.js.example jslib $(RELEASE_NAME)
+	cp -r static/* jslib $(RELEASE_NAME)
+
+release: clean-release all release_pre release_main fix_path
+
+zip: release
+	zip vmwebadm.zip vmwebadm
