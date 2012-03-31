@@ -8,10 +8,8 @@ You can use tools like SmartDC CLI (http://wiki.joyentcloud.com/display/jpc2/Abo
 
 Note the account part is just grouping machines by the owner_uuid right now.
 
-
 Getting Started
 ===============
-
 
 On your client
 --------------
@@ -38,7 +36,7 @@ The service is persistant over reboots!
 On your client
 --------------
 You can now set up your sdc toos with:
-```bash
+```sh
 sdc-setup --url http://<SmartOS IP>
 Username (login): (<your user>)
 Password: <your pass>
@@ -125,7 +123,6 @@ Machines
 [X] DeleteMachineTags
 [X] DeleteMachine
 ```
-
 
 Analytics
 ---------
