@@ -77,6 +77,13 @@ Keys
 [ ] DeleteKey
 ```
 
+Datacenters
+-----------
+This won't be implemented at the current state since it does not make sense.
+```plaintext
+[-] ListDatacenters
+[-] GetDatacenter
+```
 
 Datasets
 --------
