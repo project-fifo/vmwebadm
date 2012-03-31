@@ -125,3 +125,17 @@ Machines
 [X] DeleteMachineTags
 [X] DeleteMachine
 ```
+
+
+Analytics
+---------
+```plaintext
+[ ] DescribeAnalytics
+[ ] ListInstrumentations
+[ ] GetInstrumentation
+[ ] GetInstrumentationValue
+[ ] GetInstrumentationHeatmap
+[ ] GetInstrumentationHeatmapDetails
+[ ] CreateInstrumentation
+[ ] DeleteInstrumentation
+```

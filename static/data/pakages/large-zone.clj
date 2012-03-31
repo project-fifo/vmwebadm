@@ -1,4 +1,4 @@
-{:name "large"
+{:name "large-zone"
  :brand "joyent"
  :max_physical_memory 1024
  :nics [{:ip "dhcp"

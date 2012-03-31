@@ -14,8 +14,14 @@
    "os" "os"
    "urn" "urn"
    "type" "type"
-   "requirements" "requirements"
-   })
+   "requirements" "requirements"})
+
+(defn make-map [d]
+  (let [d (transform-keys res-map d)]
+    (assoc d
+      "default"
+      (= (get @storage/data :default-dataset)
+         (d "id")))))
 
 (defn handle [resource request response]
   (.listLocal
@@ -25,7 +31,5 @@
        (http/write response 200
                    {"Content-Type" "application/json"}
                    (clj->json (map
-                               (fn [d]
-                                 (assoc
-                                     (transform-keys res-map d) "default" false))
+                               make-map
                                datasets)))))))

@@ -6,15 +6,16 @@
 
 (defn- assoc-if [m m1 k]
   (if-let [v (m1 "metadata")]
-                 (assoc m "metadata" v)
-                 m))
+    (assoc m "metadata" v)
+    m))
 
 (defn- build-spec [data]
   (if-let [spec 
            (if-let [package (data "package")]
              (if (= (first package) "{")
                (js->clj (.parse js/JSON package))
-               (get-in @storage/data ["packages" package])))]
+               (get-in @storage/data ["packages" package]))
+             (get @storage/data :default-dataset))]
     (let [spec (assoc-if spec data "metadata")]
       (if-let [dataset  (data "dataset")]
         (if (= (spec "brand") "kvm")

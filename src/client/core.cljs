@@ -24,6 +24,7 @@
 (defn help []
   (print "Configuration tool\n"
          " import pacakge <package-file(s)> - imports one or more pacakge files.\n"
+         " default-dataset <dataset>        - sets the default dataset.\n"
          " passwd <user> <pass>             - adds a new user or resets a password for an existing one.\n"
          " port <port>                      - sets the listen port for the server.\n"
          " host <host>                      - sets the listen host for the server.\n"))
@@ -41,8 +42,10 @@
   (match [(vec args)]
          [["import" "package" & pkgs]]
          (do
-           (print "packages: " (pr-str pkgs) "/" (pr-str (vec args)) "\n")
+           (print "packages: " (pr-str pkgs) "\n")
            (doseq [pkg pkgs] (import-pacakge pkg)))
+         [["default-dataset" dataset]]
+         (update-config #(assoc-in % [:default-dataset] dataset))
          [["passwd" user passwd]]
          (update-config #(assoc-in % [:users user :passwd] (hash-str (str user ":" passwd))))
          [["port" port]]

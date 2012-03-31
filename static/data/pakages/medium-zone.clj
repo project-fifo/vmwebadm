@@ -1,4 +1,4 @@
-{:name "medium"
+{:name "medium-zone"
  :brand "joyent"
  :max_physical_memory 512
  :nics [{:ip "dhcp"
