@@ -81,8 +81,8 @@ Keys
 Datasets
 --------
 ```plaintext
-[ ] ListDatasets
-[ ] GetDataset
+[X] ListDatasets
+[X] GetDataset
 ```
 
 Packages

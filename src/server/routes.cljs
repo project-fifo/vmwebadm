@@ -19,6 +19,8 @@
             [server.packages.get :as packages.get]
             [server.keys.list :as keys.list]
             [server.keys.add :as keys.add]
+            [server.datasets.list :as datasets.list]
+            [server.datasets.get :as datasets.get]
             [server.http :as http])
   (:use [server.utils :only [clj->js prn-js clj->json]])
   (:use-macros [clojure.core.match.js :only [match]]))
@@ -143,8 +145,17 @@
              (http/with-auth resource request response account
                #(subdata.del/handle "customer_metadata" resource request response account uuid tag)))
 
-           
-           
+           ["GET" [account "datasets"] _]
+           (do
+             (print "datasets.list" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(datasets.list/handle resource request response)))
+           ["GET" [account "datasets" uuid] _]
+           (do
+             (print "datasets.list" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(datasets.get/handle resource request response uuid)))
+
            ["GET" [account "packages"] _]
            (do
              (print "packages.list" (pr-str path) "\n")
