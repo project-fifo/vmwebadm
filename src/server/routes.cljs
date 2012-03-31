@@ -18,7 +18,9 @@
             [server.packages.list :as packages.list]
             [server.packages.get :as packages.get]
             [server.keys.list :as keys.list]
+            [server.keys.get :as keys.get]
             [server.keys.add :as keys.add]
+            [server.keys.del :as keys.del]
             [server.datasets.list :as datasets.list]
             [server.datasets.get :as datasets.get]
             [server.http :as http])
@@ -45,6 +47,16 @@
              (print "keys.list" (pr-str path) "\n")
              (http/with-auth resource request response account 
                #(keys.list/handle resource request response account)))
+           ["GET" [account "keys" id] _]
+           (do
+             (print "keys.list" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(keys.get/handle resource request response account id)))
+           ["DELETE" [account "keys" id] _]
+           (do
+             (print "keys.list" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(keys.del/handle resource request response account id)))           
            ["POST" [account "keys"] _]
            (do
              (print "keys.add" (pr-str path) "\n")

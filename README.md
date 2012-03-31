@@ -72,9 +72,9 @@ Keys
 ----
 ```plaintext
 [X] ListKeys
-[ ] GetKey
+[X] GetKey
 [X] CreateKey
-[ ] DeleteKey
+[X] DeleteKey
 ```
 
 Datacenters

@@ -7,3 +7,4 @@ out/server/*
 db.js
 release
 vmwebadm
+*.bz2
