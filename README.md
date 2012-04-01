@@ -36,6 +36,7 @@ The service is persistant over reboots!
 On your client
 --------------
 You can now set up your sdc toos with:
+    
 ```sh
 sdc-setup --url http://<SmartOS IP>
 Username (login): (<your user>)
@@ -128,11 +129,11 @@ Analytics
 ---------
 ```plaintext
 [ ] DescribeAnalytics
-[ ] ListInstrumentations
-[ ] GetInstrumentation
+[X] ListInstrumentations
+[X] GetInstrumentation
 [ ] GetInstrumentationValue
 [ ] GetInstrumentationHeatmap
 [ ] GetInstrumentationHeatmapDetails
-[ ] CreateInstrumentation
-[ ] DeleteInstrumentation
+[X] CreateInstrumentation
+[X] DeleteInstrumentation
 ```

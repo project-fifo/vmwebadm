@@ -24,12 +24,19 @@
    [server.keys.get :as keys.get]
    [server.keys.add :as keys.add]
    [server.keys.del :as keys.del]
+
+   [server.instrumentations.get :as inst.get]
+   [server.instrumentations.list :as inst.list]
+   [server.instrumentations.add :as inst.add]
+   [server.instrumentations.del :as inst.del]
    
    [server.datasets.list :as datasets.list]
    [server.datasets.get :as datasets.get])
   
-  (:use [server.utils :only [clj->js prn-js clj->json]])
-  (:use-macros [clojure.core.match.js :only [match]]))
+  (:use
+   [server.utils :only [clj->js prn-js clj->json]])
+  (:use-macros
+   [clojure.core.match.js :only [match]]))
 
 (defn dispatch [resource request response]
   (print "resource:" (pr-str resource) "\n")
@@ -68,6 +75,28 @@
              (http/with-auth resource request response account
                #(keys.add/handle resource request response account)))
 
+                                        ;instrumentations
+           ["GET" [account "analytics" "instrumentations"] _]
+           (do
+             (print "inst.list" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(inst.list/handle resource request response account)))
+           ["GET" [account "analytics" "instrumentations" id] _]
+           (do
+             (print "inst.get" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(inst.get/handle resource request response account id)))
+           ["POST" [account "analytics" "instrumentations"] _]
+           (do
+             (print "inst.add" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(inst.add/handle resource request response account)))
+           ["DELETE" [account "analytics" "instrumentations" id] _]
+           (do
+             (print "inst.del" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(inst.del/handle resource request response account id)))
+           
                                         ;machines
            ["GET" [account "machines"] _]
            (do
