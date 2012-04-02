@@ -56,7 +56,8 @@
          (help)
          [m]
          (do
-           (pr m)
+           (print "Unknown command: "
+                  (pr m))
            (print "\n")
            (help))))
 

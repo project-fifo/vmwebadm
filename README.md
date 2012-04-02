@@ -1,4 +1,3 @@
-
 General
 =======
 
@@ -132,7 +131,7 @@ This part does not really do anything yet, just the management functions to edit
 [ ] DescribeAnalytics
 [X] ListInstrumentations
 [X] GetInstrumentation
-[ ] GetInstrumentationValue
+[X] GetInstrumentationValue
 [ ] GetInstrumentationHeatmap
 [ ] GetInstrumentationHeatmapDetails
 [X] CreateInstrumentation
