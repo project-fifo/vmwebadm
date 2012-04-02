@@ -127,6 +127,7 @@ Machines
 
 Analytics
 ---------
+This part does not really do anything yet, just the management functions to edit instrumentations are present.
 ```plaintext
 [ ] DescribeAnalytics
 [X] ListInstrumentations
