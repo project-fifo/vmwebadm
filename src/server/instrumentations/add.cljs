@@ -36,7 +36,7 @@
                (let [code (handler vms data)]
                  (print "=======DTRACE=======\n"
                         code
-                        "====================\n"
+                        "\n====================\n"
                         "\n")
                  (dtrace/compile consumer code)
                  (dtrace/start consumer))))

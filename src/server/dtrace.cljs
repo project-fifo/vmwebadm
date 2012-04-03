@@ -1,6 +1,7 @@
 (ns dtrace
   (:require
-   [cljs.nodejs :as node])
+   [cljs.nodejs :as node]
+   [clojure.string :as c.s])
   (:use-macros
    [clojure.core.match.js :only [match]]))
 
@@ -14,8 +15,8 @@
            {:metrics []}))
 (def handler (atom {}))
 
-(defn register-metric [p d c]
-  (swap! desc update-in [:metrics] conj m)
+(defn register-metric [p metric c]
+  (swap! desc update-in [:metrics] conj metric)
   (swap! handler assoc-in p c))
 
 (defn new []
@@ -49,14 +50,20 @@
   c)
 
 
+(defn- get-deccomp [fmap name]
+  (or
+      (get-in fmap [name :decomposition])
+      (get-in fmap [name :name])))(defn- get-deccomp [fmap name]
+  (or
+      (get-in fmap [name :decomposition])
+      (get-in fmap [name :name])))
+
 (defn compile-decomposition [field-map decomposition]
   (reduce
    (fn [s e]
      (str s "," e))
    (map
-    #(or
-      (get-in field-map [% :decomposition])
-      (get-in field-map [% :name]))
+    (partial get-deccomp field-map)
     (if (seq? decomposition)
       decomposition
       [decomposition]))))
@@ -72,6 +79,8 @@
                :name "probemod"}
    "probename" {:type :str
                 :name "probename"}
+   "zonename" {:type :str
+               :name "zonename"}
    "probeprov" {:type :str
                 :name "probeprov"}})
 
@@ -126,3 +135,77 @@
                    name :name} (field-map a)]
            (do
              (str "(" name (pred-map pred) (converter type b) ")")))))
+
+
+(def aggr-funs
+  {"count" 0
+   "sum" 1
+   "avg" 1
+   "min" 1
+   "max" 1
+   "lquantize" 4
+   "quantize" 1})
+
+
+
+
+
+
+(defn- str-join [j es]
+  (if (empty? es)
+    ""
+    (str (reduce
+          (fn [s e]
+            (str s j e))
+          es))))
+
+
+(declare compile-decomp)
+
+(defn- math-fun [op fmap args]
+  (str
+   "("
+   (str-join op (map (partial compile-decomp fmap) args))
+   ")"))
+
+(def funs
+  {"*" (partial math-fun "*")
+   "+" (partial math-fun "+")
+   "/" (partial math-fun "/")
+   "-" (partial math-fun "-")
+   "str" #(str "\"" % "\"")})
+
+(defn- compile-decomp [fmap dcomp]
+  (if (map? dcomp)
+    (let [[f args] (first dcomp)]
+      (if-let [f (funs f)]
+        (f fmap args)))
+    (if (number? dcomp)
+      (str dcomp)
+      (get-deccomp fmap dcomp))))
+
+(defn- process-fields [fmap fields]
+  (str-join "," (map
+                 (partial compile-decomp fmap)
+                 fields)))
+
+(defn- compile-aggr [fmap aggr]
+  (let [[name defs] (first aggr)
+        [aggr-fn fields] (first defs)
+        field-c (count fields)
+        arg-cnt (aggr-funs aggr-fn)
+        d-c (- field-c arg-cnt)]
+    (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" name)
+      (str
+       "@" name "["
+       (process-fields fmap (take d-c fields))
+       "]=" aggr-fn "("
+       (process-fields fmap (drop d-c fields))
+       ");")
+      "")))
+        
+(defn compile-aggrs [fmap aggrs]
+  (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" aggrs)
+    (if-let [d (compile-decomp fmap aggrs)]
+      (str "@[" d "]=count();"))
+    (apply str (map (partial compile-aggr fmap) (js->clj (.parse js/JSON aggrs))))))

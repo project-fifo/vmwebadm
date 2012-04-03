@@ -43,8 +43,8 @@
     "size" {:type :int
             :name "arg2"}
     "latency" {:type :int
-               :name "(timestamp-self->start[probefunc])"
-               :decomposition "(timestamp - self->start[probefunc])/1000"}}))
+               :name "this->latency"
+               :decomposition "this->latency"}}))
 
 (print (pr field->d) "\n")
 
@@ -66,11 +66,8 @@
      (if predicate 
        (str "&&" pred)
        "")
-     "/"
-     "{@["(dtrace/compile-decomposition field->d decomposition)"] = "
-     (or
-      (get-in field->d [decomposition :decomposition-fn])
-      "count()") ";}")))
+     "/{this->latency=timestamp-self->start[probefunc];"
+     (dtrace/compile-aggrs field->d decomposition)"}")))
 
 (dtrace/register-metric
  ["fs" "logical_ops"]

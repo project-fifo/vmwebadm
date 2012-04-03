@@ -139,3 +139,42 @@ This part does not really do anything yet, just the management functions to edit
 [X] CreateInstrumentation
 [X] DeleteInstrumentation
 ```
+
+In addition to the normal decomposition vmwebadm supports a json base format to describe decompositions, the idea is to allow complex calls take the following example:
+
+
+```plaintext
+sdc-createinstrumentation -m fs -s logical_ops -n '[{"latency": {"count": [{"*": [{"/": ["latency", 1000]}, 1000]},{"+": [{"*": [{"/": ["latency", 1000]}, 1000]}, 999]}]}}]' -p '{"eq": ["optype","write"]}'
+```
+
+this compiles to
+
+```D
+syscall::write:entry,
+syscall::read:entry
+{
+  self->start[probefunc] = timestamp;
+}
+
+syscall::read:return,
+syscall::write:return
+/self->start[probefunc]&&(probefunc=="write")/
+{
+  @latency[(((timestamp - self->start[probefunc])/1000)*1000),((((timestamp - self->start[probefunc])/1000)*1000)+999)]=count();
+}
+```
+
+The syntax is comparable to the one used for predicates:
+
+```
+result=[<aggr>+];
+aggr={<name>: <aggrdef>}
+name=/a-zZ-Z/*
+fieldname=/a-zZ-Z/*
+field=<function>|fieldname
+function={<fn-name>: [<params>+]}
+args=field
+fn-name=fieldname|+|*|/|-
+aggrdef={<aggrfn>: [<field>+, <args>+]}
+aggrfn=count|sum|avg|min|max|lquantize|quantize
+```

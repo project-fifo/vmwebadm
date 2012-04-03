@@ -25,7 +25,7 @@
    [server.keys.add :as keys.add]
    [server.keys.del :as keys.del]
 
-   [server.instrumentations.get :as inst.get]
+   [server.instrumentations.desc :as inst.desc]
    [server.instrumentations.getval :as inst.getval]
    [server.instrumentations.list :as inst.list]
    [server.instrumentations.add :as inst.add]
@@ -78,6 +78,11 @@
                #(keys.add/handle resource request response account)))
 
                                         ;instrumentations
+           ["GET" [account "analytics"] _]
+           (do
+             (print "inst.desc" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(inst.desc/handle resource request response account)))
            ["GET" [account "analytics" "instrumentations"] _]
            (do
              (print "inst.list" (pr-str path) "\n")
@@ -98,7 +103,6 @@
              (print "inst.del" (pr-str path) "\n")
              (http/with-auth resource request response account 
                #(inst.del/handle resource request response account (js/parseInt id))))
-           
            ["GET" [account "analytics" "instrumentations" id "value" "raw"] _]
            (do
              (print "inst.get-val" (pr-str path) "\n")
