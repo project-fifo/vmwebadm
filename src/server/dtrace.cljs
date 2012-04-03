@@ -2,6 +2,8 @@
   (:require
    [cljs.nodejs :as node]
    [clojure.string :as c.s])
+  (:use
+   [server.utils :only [prn]])
   (:use-macros
    [clojure.core.match.js :only [match]]))
 
@@ -173,7 +175,15 @@
    "+" (partial math-fun "+")
    "/" (partial math-fun "/")
    "-" (partial math-fun "-")
-   "str" #(str "\"" % "\"")})
+   "str" #(str "\"" % "\"")
+   "range" (fn [fmap [d r]]
+             (pr d) (print "\n")
+             (pr r) (print "\n")
+             (let [c (compile-decomp fmap d)]
+               (pr c) (print "\n")
+               (str
+                "("c"/"r")*"r",(("c"/"r")*"r")+" (dec r))))
+   })
 
 (defn- compile-decomp [fmap dcomp]
   (if (map? dcomp)
