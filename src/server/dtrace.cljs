@@ -204,12 +204,15 @@
         [aggr-fn fields] (first defs)
         field-c (count fields)
         arg-cnt (aggr-funs aggr-fn)
-        d-c (- field-c arg-cnt)]
+        d-c (- field-c arg-cnt)
+        aggr-fields (take d-c fields)]
     (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" name)
       (str
-       "@" name "["
-       (process-fields fmap (take d-c fields))
-       "]=" aggr-fn "("
+       "@" name
+       (if (empty? aggr-fields)
+         ""
+         (str "["(process-fields fmap aggr-fields)"]"))
+       "=" aggr-fn "("
        (process-fields fmap (drop d-c fields))
        ");")
       "")))
@@ -217,5 +220,5 @@
 (defn compile-aggrs [fmap aggrs]
   (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" aggrs)
     (if-let [d (compile-decomp fmap aggrs)]
-      (str "@[" d "]=count();"))
+      (str "@=quantize("d");"))
     (apply str (map (partial compile-aggr fmap) (js->clj (.parse js/JSON aggrs))))))
