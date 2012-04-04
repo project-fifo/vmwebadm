@@ -92,7 +92,7 @@
            (do
              (print "inst.get" (pr-str path) "\n")
              (http/with-auth resource request response account 
-               #(inst.get/handle resource request response account (js/parseInt id))))
+               #(inst.get/handle resource request response account (dec (js/parseInt id)))))
            ["POST" [account "analytics" "instrumentations"] _]
            (do
              (print "inst.add" (pr-str path) "\n")
@@ -102,12 +102,12 @@
            (do
              (print "inst.del" (pr-str path) "\n")
              (http/with-auth resource request response account 
-               #(inst.del/handle resource request response account (js/parseInt id))))
+               #(inst.del/handle resource request response account (dec (js/parseInt id)))))
            ["GET" [account "analytics" "instrumentations" id "value" "raw"] _]
            (do
              (print "inst.get-val" (pr-str path) "\n")
              (http/with-auth resource request response account 
-               #(inst.getval/handle resource request response account (js/parseInt id))))
+               #(inst.getval/handle resource request response account (dec (js/parseInt id)))))
            
                                         ;machines
            ["GET" [account "machines"] _]
