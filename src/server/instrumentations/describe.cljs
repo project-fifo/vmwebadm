@@ -6,24 +6,18 @@
 
 
 (def metrics-map
-  {
-    :module "module"
+  {:module "module"
     :stat "stats"
     :label "label"
     :interval "interval"
     :fields "fields"
-    :unit "unit"
-  })
+    :unit "unit"})
 
 (defn handle [resource request response account]
   (http/write response 200
               {"Content-Type" "application/json"}
               (clj->json
-               {:modules {}
-                :fields {}
-                :metrics (map #(do
-                                 (prn %)
-                                 (prn metrics-map)
-                                 (prn (transform-keys metrics-map %))
-                                 (transform-keys metrics-map %)) (@dtrace/desc :metrics))
+               {:modules (dtrace/desc-modules)
+                :fields (dtrace/desc-fields)
+                :metrics (map #(transform-keys metrics-map %) (@dtrace/desc :metrics))
                 :transformations {}})))

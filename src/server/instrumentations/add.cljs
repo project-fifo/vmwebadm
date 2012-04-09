@@ -17,9 +17,9 @@
           (http/write response 200
                       {"Content-Type" "application/json"}
                       (clj->json (get-in @storage/data [:users account :instrumentations clone]))))
-
+        
         (if-let [handler (get-in @dtrace/handler [(data "module")
-                                                   (data "stat")])]
+                                                  (data "stat")])]
           (let [data (if (data "predicate")
                        (assoc data "predicate" (js->clj
                                                 (.parse

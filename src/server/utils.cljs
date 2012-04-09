@@ -40,8 +40,10 @@
    (js/Buffer. s "base64")
    (.toString "ascii")))
 
-(defn prn [form]
-  (print "prn>" (pr-str form) "\n"))
+(defn prn [& forms]
+  (print "prn>" (reduce
+                 #(str %1 " " %2)
+                 (map #(pr-str %) forms)) "\n"))
 
 
 (defn hash-str [str]

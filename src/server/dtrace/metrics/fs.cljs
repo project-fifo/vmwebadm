@@ -1,63 +1,26 @@
 (ns dtrace.metrics.fs
   (:require [dtrace :as dtrace]))
 
-;; args[0]
-;; typedef struct bufinfo {
-;;     int b_flags;       /* flags */
-;;     size_t b_bcount;   /* number of bytes */
-;;     caddr_t b_addr;    /* buffer address */
-;;     uint64_t b_blkno;  /* expanded block # on device */
-;;     uint64_t b_lblkno; /* block # on device */
-;;     size_t b_resid;    /* # of bytes not transferred */
-;;     size_t b_bufsize;  /* size of allocated buffer */
-;;     caddr_t b_iodone;  /* I/O completion routine */
-;;     dev_t b_edev;      /* extended device */
-;; } bufinfo_t;
+(def field-logical
+  {"optype" {:type :str
+             :name "probefunc"}
+   "latency" {:type :int
+              :name "this->latency"}})
 
-;; args[1]
-;; typedef struct devinfo {
-;;     int dev_major;       /* major number */
-;;     int dev_minor;       /* minor number */
-;;     int dev_instance;    /* instance number */
-;;     string dev_name;     /* name of device */
-;;     string dev_statname; /* name of device + instance/minor */
-;;     string dev_pathname; /* pathname of device */
-;; } devinfo_t;
+(def field-io
+  {"optype" {:type :str
+             :name "((probefunc == \"readch\") ? \"read\" : \"write\")"}
+   "size" {:type :int
+           :name "arg0"}})
 
-;; args[2]
-;; typedef struct fileinfo {
-;;     string fi_name;     /* name (basename of fi_pathname) */
-;;     string fi_dirname;  /* directory (dirname of fi_pathname) */
-;;     string fi_pathname; /* full pathname */
-;;     offset_t fi_offset; /* offset within file */
-;;     string fi_fs;       /* filesystem */
-;;     string fi_mount;    /* mount point of file system */
-;; } fileinfo_t;
-
-(def field->d
-  (merge
-   dtrace/default-fields
-   {    
-    "optype" {:type :str
-              :name "probefunc"}
-    "size" {:type :int
-            :name "arg2"}
-    "latency" {:type :int
-               :name "this->latency"
-               :decomposition "this->latency"}}))
-
-(print (pr field->d) "\n")
-
-
-
-
-(defn compile [zones
-               {decomposition "decomposition"
-                predicate "predicate"}]
-  (let [pred (dtrace/compile-predicate field->d predicate)]
+(defn compile-logical [zones
+                       {decomposition "decomposition"
+                        predicate "predicate"}]
+  (let [pred (dtrace/compile-predicate field-logical predicate)]
     (str
      "syscall::write:entry,"
      "syscall::read:entry"
+     "/" (dtrace/compile-zone-predicate zones) "/"
      "{self->start[probefunc] = timestamp;}"
      "syscall::read:return,"
      "syscall::write:return"
@@ -66,15 +29,46 @@
      (if predicate 
        (str "&&" pred)
        "")
-     "/{this->latency=timestamp-self->start[probefunc];"
-     (dtrace/compile-aggrs field->d decomposition)"}")))
+     "/"
+     "{"
+     "this->latency=timestamp-self->start[probefunc];"
+     (dtrace/compile-aggrs (merge dtrace/default-fields field-logical) decomposition)
+     "}")))
+
+(defn compile-io [zones
+                  {decomposition "decomposition"
+                   predicate "predicate"}]
+  (let [pred (dtrace/compile-predicate field-io predicate)]
+    (str
+     "sysinfo:::readch,"
+     "sysinfo:::writech"
+     "/" (dtrace/compile-zone-predicate zones) 
+     (if predicate 
+       (str "&&" pred )
+       "")
+     "/"
+     "{"
+     (dtrace/compile-aggrs field-io decomposition)
+     "}")))
 
 (dtrace/register-metric
  ["fs" "logical_ops"]
  {:module "fs"
   :stat "logical_ops"
+  :human-readable "FS"
   :label "logical filesystem operations"
   :interval "interval"
-  :fields (keys field->d)
+  :fields (keys field-logical)
   :unit "operations"}
- compile)
+ compile-logical)
+
+(dtrace/register-metric
+ ["fs" "io_ops"]
+ {:module "fs"
+  :stat "io_ops"
+  :human-readable "FS"
+  :label "io related filesystem operations"
+  :interval "interval"
+  :fields (keys field-io)
+  :unit "size"}
+ compile-io)

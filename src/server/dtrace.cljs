@@ -15,6 +15,7 @@
 
 (def desc (atom
            {:metrics []}))
+
 (def handler (atom {}))
 
 (defn register-metric [p metric c]
@@ -81,10 +82,30 @@
                :name "probemod"}
    "probename" {:type :str
                 :name "probename"}
+   "timestamp" {:type :int
+                :name "timestamp"}
    "zonename" {:type :str
                :name "zonename"}
    "probeprov" {:type :str
                 :name "probeprov"}})
+
+
+(defn desc-fields []
+  (reduce
+   (fn [m k]
+     (assoc m k (get-in default-fields [m :desc] {:desc "global instrumentation field"})))
+   {}
+   (keys default-fields)))
+
+(defn desc-modules []
+  (reduce
+   (fn [m k]
+     (assoc
+         m
+       (:module k)
+       (:human-readable k)))
+   {}
+   (:metrics @desc)))
 
 (def pred-map
   {"eq" "=="
@@ -148,11 +169,6 @@
    "lquantize" 4
    "quantize" 1})
 
-
-
-
-
-
 (defn- str-join [j es]
   (if (empty? es)
     ""
@@ -160,7 +176,6 @@
           (fn [s e]
             (str s j e))
           es))))
-
 
 (declare compile-decomp)
 
@@ -216,9 +231,13 @@
        (process-fields fmap (drop d-c fields))
        ");")
       "")))
-        
-(defn compile-aggrs [fmap aggrs]
+
+
+(defn- compile-aggrs* [fmap aggrs]
   (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" aggrs)
     (if-let [d (compile-decomp fmap aggrs)]
       (str "@=quantize("d");"))
     (apply str (map (partial compile-aggr fmap) (js->clj (.parse js/JSON aggrs))))))
+
+(defn compile-aggrs [fmap aggrs]
+  (compile-aggrs* (merge default-fields fmap)))
