@@ -7,4 +7,4 @@
   (http/write response 200
               {"Content-Type" "application/json"}
               (clj->json
-               (nth id (get-in @storage/data [:users account :instrumentations])))))
+               (nth id (get-in @storage/instrumentations [account])))))

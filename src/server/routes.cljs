@@ -101,8 +101,9 @@
            ["DELETE" [account "analytics" "instrumentations" id] _]
            (do
              (print "inst.del" (pr-str path) "\n")
-             (http/with-auth resource request response account 
+             (http/with-auth resource request response account
                #(inst.del/handle resource request response account (dec (js/parseInt id)))))
+           
            ["GET" [account "analytics" "instrumentations" id "value" "raw"] _]
            (do
              (print "inst.get-val" (pr-str path) "\n")

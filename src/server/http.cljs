@@ -90,13 +90,13 @@
         (if-let [pub (get-in @storage/data path)]
           (if (.verifySignature http-signature parsed pub)
             (f)
-            (http/error res 401 "verification failed"))
-          (http/error res 401 "key not found"))
-        (http/error res 401 "wrong pki user")))
+            (error response 401 "verification failed"))
+          (error response 401 "key not found"))
+        (error response 401 "wrong pki user")))
     (catch js/Error e
       (try
         (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
         (with-passwd-auth resource response account f)
         (catch js/Error e
           (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
-          (http/error res (http/encode-error "Error during not logged in dispatch." e)))))))
+          (error response (encode-error "Error during not logged in dispatch." e)))))))

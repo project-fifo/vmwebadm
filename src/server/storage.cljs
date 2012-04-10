@@ -4,6 +4,9 @@
             [cljs.reader :as reader]))
 
 
+
+(def instrumentations (atom {}))
+
 (def data (atom {}))
 
 (def fs (node/require "fs"))

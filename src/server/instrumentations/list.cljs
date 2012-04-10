@@ -11,4 +11,4 @@
   (http/write response 200
               {"Content-Type" "application/json"}
               (clj->json
-               (get-in @storage/data [:users account :instrumentations]))))
+               (map #(dissoc % :consumer) (get-in @storage/instrumentations [account])))))

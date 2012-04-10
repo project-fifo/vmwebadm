@@ -23,33 +23,76 @@
   (swap! handler assoc-in p c))
 
 (defn new []
-  (new consumer))
+  (atom {:consumer
+         (new consumer)
+         :data (atom {})}))
 
 (defn compile [c code]
-  (.strcompile c code)
+  (.strcompile (:consumer @c) code)
   c)
 
 (defn setopt [c opt val]
-  (.setopt c opt val)
+  (.setopt (:consumer @c) opt val)
   c)
 
 (defn consume [c f]
-  (.consume c
+  (.consume (:consumer @c)
             (fn [p r]
               (f (js->clj p) (js->clj r))))
   c)
 
+(defn update-map [data vs]
+  (reduce
+   (fn [m [k v]]
+     (update-in m
+                [k]
+                (fn [b] (+ (or b 0) v))))
+   data
+   vs))
+
+(defn- aggr-walker [data id k v]
+  (try
+    (swap! data update-map v)
+    (catch js/Error e
+      (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
+      (print "error:" (pr-str id) "-" (pr-str k) "-" (pr-str v)))))
+
+
 (defn aggwalk [c f]
-  (.aggwalk c (fn [i k v]
-                (f (js->clj i) (js->clj k) (js->clj v))))
+  (.aggwalk (:consumer @c)
+            (fn [i k v]
+              (f (js->clj i)
+                 (js->clj k)
+                 (js->clj v))))
   c)
 
+(defn update [c]
+  (aggwalk
+   c
+   (fn [i k v]
+     (aggr-walker (:data @c) i k v))))
+
+(defn values [c]
+  (update c)
+  (vec @(:data @c)))
+
 (defn stop [c]
-  (.stop c)
+  (.stop (:consumer @c))
+  (if-let [timer (:timer @c)]
+    (do
+      (js/clearInterval timer)
+      (swap! c dissoc :timer)))
   c)
 
 (defn start [c]
-  (.go c)
+  (.go (:consumer @c))
+  
+  (if (not (:timer @c))
+    (swap! c assoc :timer
+           (js/setInterval
+            (fn []
+              (update c))
+            1000)))
   c)
 
 
@@ -192,10 +235,7 @@
    "-" (partial math-fun "-")
    "str" #(str "\"" % "\"")
    "range" (fn [fmap [d r]]
-             (pr d) (print "\n")
-             (pr r) (print "\n")
              (let [c (compile-decomp fmap d)]
-               (pr c) (print "\n")
                (str
                 "("c"/"r")*"r",(("c"/"r")*"r")+" (dec r))))
    })
@@ -232,12 +272,15 @@
        ");")
       "")))
 
-
 (defn- compile-aggrs* [fmap aggrs]
   (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" aggrs)
     (if-let [d (compile-decomp fmap aggrs)]
       (str "@=quantize("d");"))
-    (apply str (map (partial compile-aggr fmap) (js->clj (.parse js/JSON aggrs))))))
+    (apply
+     str
+     (map
+      (partial compile-aggr fmap)
+      (js->clj (.parse js/JSON aggrs))))))
 
 (defn compile-aggrs [fmap aggrs]
-  (compile-aggrs* (merge default-fields fmap)))
+  (compile-aggrs* (merge default-fields fmap) aggrs))

@@ -3,15 +3,15 @@
 
 
 (def field
-  {"optype" {:type :str
-             :name "probefunc"}
+  {"syscall" {:type :str
+              :name "probefunc"}
    "latency" {:type :int
               :name "this->latency"}})
 
-(defn compile-logical [zones
+(defn compile [zones
                        {decomposition "decomposition"
                         predicate "predicate"}]
-  (let [pred (dtrace/compile-predicate field-logical predicate)]
+  (let [pred (dtrace/compile-predicate field predicate)]
     (str
      "syscall:::entry"
      "/" (dtrace/compile-zone-predicate zones) "/"
@@ -25,7 +25,7 @@
      "/"
      "{"
      "this->latency=timestamp-self->start[probefunc];"
-     (dtrace/compile-aggrs field-logical decomposition)
+     (dtrace/compile-aggrs field decomposition)
      "}")))
 
 (dtrace/register-metric
@@ -37,4 +37,4 @@
   :interval "interval"
   :fields (keys field)
   :unit "operations"}
- compile-logical)
+ compile)

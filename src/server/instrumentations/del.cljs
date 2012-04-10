@@ -10,10 +10,10 @@
    (drop (inc n) coll)))
 
 (defn handle [resource request response account id]
-  (let [consumer  (get-in @storage/data [:users account :instrumentations id :consumer])]
+  (let [consumer (get-in @storage/instrumentations [account id :consumer])]
     (if consumer (dtrace/stop consumer))
-    (swap! storage/data update-in [:users account :instrumentations]
-           #(remove-at (js/parseInt id) %))
+    (swap! storage/instrumentations update-in [account]
+           #(remove-at id %))
     (http/write response 200
                 {"Content-Type" "application/json"}
                 "")))
