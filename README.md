@@ -130,7 +130,7 @@ Analytics
 This part does not really do anything yet, just the management functions to edit instrumentations are present.
 
 ```plaintext
-[ ] DescribeAnalytics
+[X] DescribeAnalytics
 [X] ListInstrumentations
 [X] GetInstrumentation
 [X] GetInstrumentationValue
