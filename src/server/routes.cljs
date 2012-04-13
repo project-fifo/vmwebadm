@@ -16,10 +16,10 @@
    [server.machines.subdata.add :as subdata.add]
    [server.machines.subdata.del :as subdata.del]
    [server.machines.subdata.del_all :as subdata.del_all]
-   
+
    [server.packages.list :as packages.list]
    [server.packages.get :as packages.get]
-            
+
    [server.keys.list :as keys.list]
    [server.keys.get :as keys.get]
    [server.keys.add :as keys.add]
@@ -27,6 +27,8 @@
 
    [server.instrumentations.desc :as inst.desc]
    [server.instrumentations.getval :as inst.getval]
+   [server.instrumentations.getheatmap :as inst.getheatmap]
+   [server.instrumentations.get :as inst.get]
    [server.instrumentations.list :as inst.list]
    [server.instrumentations.add :as inst.add]
    [server.instrumentations.del :as inst.del]
@@ -109,7 +111,14 @@
              (print "inst.get-val" (pr-str path) "\n")
              (http/with-auth resource request response account 
                #(inst.getval/handle resource request response account (dec (js/parseInt id)))))
-           
+
+           ["GET" [account "analytics" "instrumentations" id "value" "heatmap" "image"] _]
+           (do
+             (print "inst.get-val" (pr-str path) "\n")
+             (http/with-auth resource request response account 
+               #(inst.getheatmap/handle resource request response account (dec (js/parseInt id)))))
+
+
                                         ;machines
            ["GET" [account "machines"] _]
            (do

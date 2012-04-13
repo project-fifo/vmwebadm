@@ -27,8 +27,7 @@
      "/"
      "self->start[probefunc]"
      (if predicate 
-       (str "&&" pred)
-       "")
+       (str "&&" pred))
      "/"
      "{"
      "this->latency=timestamp-self->start[probefunc];"
@@ -44,8 +43,7 @@
      "sysinfo:::writech"
      "/" (dtrace/compile-zone-predicate zones) 
      (if predicate 
-       (str "&&" pred )
-       "")
+       (str "&&" pred))
      "/"
      "{"
      (dtrace/compile-aggrs field-io decomposition)

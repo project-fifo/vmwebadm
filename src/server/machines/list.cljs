@@ -27,7 +27,7 @@
    "state" "state"
    "nics" (fn [m nics]
             (assoc m "ips"
-                   (filter #(not= "dhcp")
+                   (filter #(not= % "dhcp")
                            (map #(get % "ip") nics))))
    "max_physical_memory" "memory"
    "disks" (fn [m disks]

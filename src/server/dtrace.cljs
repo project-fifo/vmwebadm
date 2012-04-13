@@ -52,11 +52,12 @@
 
 (defn- aggr-walker [data id k v]
   (try
-    (swap! data update-map v)
+    (if (seq? v)
+      (swap! data update-map v)
+      (swap! data assoc k v))
     (catch js/Error e
       (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
       (print "error:" (pr-str id) "-" (pr-str k) "-" (pr-str v)))))
-
 
 (defn aggwalk [c f]
   (.aggwalk (:consumer @c)
@@ -99,9 +100,6 @@
 (defn- get-deccomp [fmap name]
   (or
       (get-in fmap [name :decomposition])
-      (get-in fmap [name :name])))(defn- get-deccomp [fmap name]
-  (or
-      (get-in fmap [name :decomposition])
       (get-in fmap [name :name])))
 
 (defn compile-decomposition [field-map decomposition]
@@ -114,9 +112,25 @@
       decomposition
       [decomposition]))))
 
+
+(defn transform-str [name m]
+  (reduce
+   (fn [s v]
+     (str "((" name "==" "\"" (m v) "\")?" "\"" v "\":" s ")"))
+   (str "\"unknown\"")
+   (keys m)))
+
 (def default-fields
   {"pid" {:type :int
           :name "pid"}
+   "second" {:type :int
+             :name "(timestamp/1000000000)"}
+   "milisecond" {:type :int
+                 :name "(timestamp/1000000)"}
+   "submilisecond" {:type :int
+                    :name "((timestamp/1000000)%1000)"}
+   "subsecondmap"  {:type :int
+                    :name "(timestamp/1000000000),((timestamp/1000000)%1000)"}
    "execname" {:type :str
                :name "execname"}
    "probefunc" {:type :str
@@ -131,7 +145,6 @@
                :name "zonename"}
    "probeprov" {:type :str
                 :name "probeprov"}})
-
 
 (defn desc-fields []
   (reduce
@@ -159,15 +172,18 @@
    "neq" "!="})
 
 (def converter-map
-  {:str  #(str "\"" % "\"")
-   :int (fn [x] x)})
+  {:str  #(str "\"" %1 "\"")
+   :enum (fn [x m]
+           (if ((:enum  m) x)
+             (str "\"" x "\"")
+             (throw (str "invalid enum value '" x "' valid choices are: " m))))
+   :int (fn [x y] x)})
 
-(defn converter [t d]
+(defn converter [t d m]
   ((if (fn? t)
      t
      (converter-map t))
-   d))
-
+   d m))
 
 (defn compile-zone-predicate [zones]
   (str
@@ -180,7 +196,7 @@
      zones))
    ")"))
 
-(defn compile-predicate [field-map predicate]
+(defn compile-predicate* [field-map predicate]
   (match [(first predicate)]
          [[:and preds]]
          (str "("
@@ -197,11 +213,14 @@
                (map compile-predicate preds))
               ")")
          [[pred [a b]]]
-         (if-let [{type :type
-                   name :name} (field-map a)]
-           (do
-             (str "(" name (pred-map pred) (converter type b) ")")))))
+         (let [type-map  (field-map a)]
+           (if-let [{type :type
+                     name :name} type-map]
+             (do
+               (str "(" name (pred-map pred) (converter type b type-map) ")"))))))
 
+(defn compile-predicate [fmap predicate]
+  (compile-predicate* (merge default-fields fmap) predicate))
 
 (def aggr-funs
   {"count" 0
@@ -237,8 +256,7 @@
    "range" (fn [fmap [d r]]
              (let [c (compile-decomp fmap d)]
                (str
-                "("c"/"r")*"r",(("c"/"r")*"r")+" (dec r))))
-   })
+                "("c"/"r")*"r",(("c"/"r")*"r")+" (dec r))))})
 
 (defn- compile-decomp [fmap dcomp]
   (if (map? dcomp)
@@ -261,7 +279,7 @@
         arg-cnt (aggr-funs aggr-fn)
         d-c (- field-c arg-cnt)
         aggr-fields (take d-c fields)]
-    (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" name)
+    (if (re-matches #"^[a-zA-Z]*[a-zA-Z0-9]*$" name)
       (str
        "@" name
        (if (empty? aggr-fields)
@@ -275,7 +293,13 @@
 (defn- compile-aggrs* [fmap aggrs]
   (if (re-matches #"^[a-zA-Z]+[a-zA-Z0-9]*$" aggrs)
     (if-let [d (compile-decomp fmap aggrs)]
-      (str "@=quantize("d");"))
+      (if (string? d)
+        (str "@=quantize("d");")
+        (do
+          (pr d) (print "<-d\n")
+          (pr fmap) (print "<-fmap\n")
+          (pr (compile-aggr fmap d)) (print "<-res\n")
+          (compile-aggr fmap d))))
     (apply
      str
      (map
