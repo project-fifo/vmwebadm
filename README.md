@@ -10,6 +10,15 @@ Note the account part is just grouping machines by the owner_uuid right now.
 Getting Started
 ===============
 
+Grab the SmartDC Tools
+----------------------
+You can read the how to get started here: http://apidocs.joyent.com/sdcapidoc/cloudapi/#getting-started .
+Or just grab do:
+
+```
+npm install smartdc -g
+```
+
 On your client
 --------------
 * First clone this repository
@@ -37,7 +46,7 @@ On your client
 You can now set up your sdc toos with:
     
 ```sh
-sdc-setup --url http://<SmartOS IP>
+sdc-setup http://<SmartOS IP>
 Username (login): (<your user>)
 Password: <your pass>
 ```
