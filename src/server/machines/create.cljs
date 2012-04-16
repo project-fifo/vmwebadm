@@ -34,7 +34,7 @@
     (fn [data]
       (if-let [spec (build-spec data)]
         (vm/create
-         (assoc spec "owner_uuid" login)
+         (assoc spec "owner_uuid" (get-in @storage/data [:users login :uuid]))
          (fn [error vm]
            (if error
              (http/error response {:msg "Error in server.machien.create" :err (js->clj error)})

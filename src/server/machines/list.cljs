@@ -46,7 +46,7 @@
     (vm/lookup
      (if (get-in @storage/data [:users account :admin])
        q
-       (assoc  q "owner_uuid" account))
+       (assoc  q "owner_uuid" (get-in @storage/data [:users account :uuid])))
      {:full true}
      (fn [error vms]
        (if error

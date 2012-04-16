@@ -2,10 +2,15 @@
   (:use-macros [clojure.core.match.js :only [match]])
   (:require
    [cljs.reader :as reader]
+   [clojure.string :as c.s]
    [cljs.nodejs :as node]))
 
 (def fs (node/require "fs"))
 (def crypto (node/require "crypto"))
+(def util (node/require "util"))
+(def cp
+  (node/require "child_process"))
+
 
 (defn slurp [f]
   (str (.readFileSync fs f)))
@@ -29,6 +34,7 @@
          " list users                       - lists all known users\n"
          " promote <user>                   - grants a user admin rights.\n"
          " demote <user>                    - demotes a user from admin rights.\n"
+         " delete <user>                    - deletes a user.\n"
          " port <port>                      - sets the listen port for the server.\n"
          " host <host>                      - sets the listen host for the server.\n"))
 
@@ -42,15 +48,26 @@
     (update-config #(assoc-in % [:packages name] p))))
 
 (defn format-users [[name u]]
-  (print (str  " [" (if (:admin u) "*" " ") "]   | " name "\n")))
+  (print (.format util " [%s]  | %s | %s\n" (if (:admin u) "*" " ") (:uuid u) name)))
 
 (defn list-users []
-  (print "Admin | User\n")
-  (print "------+-----------------------------------------------------\n")
+  (print "Admin | UUID                                 | Login\n")
+  (print "------+--------------------------------------+------------------------\n")
   (doall
       (map
        format-users
        (:users (read "db.clj")))))
+
+(defn passwd-user [user passwd]
+  (.exec cp
+         "uuid"
+         (fn [error stdout stderr]
+           (let [uuid (c.s/replace stdout #"\n" "")]
+             (update-config
+              #(if (get-in % [:users user])
+                 (assoc-in % [:users user :passwd] (hash-str (str user ":" passwd)))
+                 (assoc-in % [:users user] {:passwd  (hash-str (str user ":" passwd))
+                                            :uuid uuid})))))))
 
 (defn start [& args]
   (match [(vec args)]
@@ -61,7 +78,7 @@
          [["default-dataset" dataset]]
          (update-config #(assoc-in % [:default-dataset] dataset))
          [["passwd" user passwd]]
-         (update-config #(assoc-in % [:users user :passwd] (hash-str (str user ":" passwd))))
+         (passwd-user user passwd)
          [["promote" user]]
          (update-config #(if (get-in % [:users user])
                            (assoc-in  % [:users user :admin] true)

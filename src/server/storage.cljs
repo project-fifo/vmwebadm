@@ -19,3 +19,6 @@
 
 (defn init []
   (reset! data (js->clj (reader/read-string (slurp "db.clj")))))
+
+(js/setInterval
+ init (* 30 1000))
