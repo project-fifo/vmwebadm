@@ -39,8 +39,6 @@
          " host <host>                      - sets the listen host for the server.\n"))
 
 (defn import-pacakge [p]
-  (print p ":" (slurp p) "\n")
-  
   (let [p (read p)
         name (p :name)
         p (dissoc p :name)]
@@ -64,48 +62,51 @@
          (fn [error stdout stderr]
            (let [uuid (c.s/replace stdout #"\n" "")]
              (update-config
-              #(if (get-in % [:users user])
+              #(if (get-in % [:users user :uuid])
                  (assoc-in % [:users user :passwd] (hash-str (str user ":" passwd)))
-                 (assoc-in % [:users user] {:passwd  (hash-str (str user ":" passwd))
-                                            :uuid uuid})))))))
+                 (assoc-in
+                  (assoc-in % [:users user :passwd] (hash-str (str user ":" passwd)))
+                  [:users user :uuid] uuid)))))))
 
 (defn start [& args]
-  (match [(vec args)]
-         [["import" "package" & pkgs]]
-         (do
-           (print "packages: " (pr-str pkgs) "\n")
-           (doseq [pkg pkgs] (import-pacakge pkg)))
-         [["default-dataset" dataset]]
-         (update-config #(assoc-in % [:default-dataset] dataset))
-         [["passwd" user passwd]]
-         (passwd-user user passwd)
-         [["promote" user]]
-         (update-config #(if (get-in % [:users user])
-                           (assoc-in  % [:users user :admin] true)
-                           (do
-                             (print "Unknown user" (str user ".\n"))
-                             %)))
-         [["demote" user]]
-         (update-config #(if (get-in % [:users user])
-                           (assoc-in  % [:users user :admin] false)
-                           (do
-                             (print "Unknown user" (str user ".\n"))
-                             %)))
-         [["delete" user]]
-         (update-config #(update-in  % [:users] (fn [m] (dissoc m user))))
-         [["list" "users"]]
-         (list-users)
-         [["port" port]]
-         (update-config #(assoc-in % [:server :port] (js/parseInt port)))
-         [["host" host]]
-         (update-config #(assoc-in % [:server :host] host))
-         [["help"]]
-         (help)
-         [m]
-         (do
-           (print "Unknown command: "
-                  (pr m))
-           (print "\n")
-           (help))))
+  (if (empty? args)
+    (help)
+    (match [(vec args)]
+           [["import" "package" & pkgs]]
+           (do
+             (print "packages: " (pr-str pkgs) "\n")
+             (doseq [pkg pkgs] (import-pacakge pkg)))
+           [["default-dataset" dataset]]
+           (update-config #(assoc-in % [:default-dataset] dataset))
+           [["passwd" user passwd]]
+           (passwd-user user passwd)
+           [["promote" user]]
+           (update-config #(if (get-in % [:users user])
+                             (assoc-in  % [:users user :admin] true)
+                             (do
+                               (print "Unknown user" (str user ".\n"))
+                               %)))
+           [["demote" user]]
+           (update-config #(if (get-in % [:users user])
+                             (assoc-in  % [:users user :admin] false)
+                             (do
+                               (print "Unknown user" (str user ".\n"))
+                               %)))
+           [["delete" user]]
+           (update-config #(update-in  % [:users] (fn [m] (dissoc m user))))
+           [["list" "users"]]
+           (list-users)
+           [["port" port]]
+           (update-config #(assoc-in % [:server :port] (js/parseInt port)))
+           [["host" host]]
+           (update-config #(assoc-in % [:server :host] host))
+           [["help"]]
+           (help)
+           :else
+           (do
+             (print "Unknown command: "
+                    (pr m))
+             (print "\n")
+             (help)))))
 
 (set! *main-cli-fn* start)

@@ -51,6 +51,22 @@ Username (login): (<your user>)
 Password: <your pass>
 ```
 
+Configuration commands
+======================
+
+```
+Configuration tool
+  import pacakge <package-file(s)> - imports one or more pacakge files.
+  default-dataset <dataset>        - sets the default dataset.
+  passwd <user> <pass>             - adds a new user or resets a password for an existing one.
+  list users                       - lists all known users
+  promote <user>                   - grants a user admin rights.
+  demote <user>                    - demotes a user from admin rights.
+  delete <user>                    - deletes a user.
+  port <port>                      - sets the listen port for the server.
+  host <host>                      - sets the listen host for the server.
+```
+
 Currently supported sdc-commands
 ============================
 
