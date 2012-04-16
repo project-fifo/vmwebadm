@@ -26,6 +26,7 @@
            (.exec cp
                   cmd
                   (fn [error, stdout, stderr]
+                    (storage/init)
                     (swap! storage/data assoc-in [:users account :keys name] {:web stdout
                                                                               :ssh key})
                     (storage/save)
