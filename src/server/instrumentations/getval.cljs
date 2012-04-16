@@ -12,7 +12,7 @@
                   {"Content-Type" "application/json"}
                   (try 
                     (clj->json
-                     {:value (dtrace/values consumer) 10
+                     {:value (dtrace/values consumer)
                       :transformations {}
                       :start_time 0
                       :duration 0})

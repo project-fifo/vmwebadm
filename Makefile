@@ -12,7 +12,6 @@ all: server client
 bootstrap:
 	git submodule init
 	git submodule update
-	cd clojurescript/ && git checkout r971; 
 	cd clojurescript/ && ./script/bootstrap
 	cp lib/* clojurescript/lib/
 
@@ -61,4 +60,4 @@ release_main:
 release: clean-release all release_pre release_main fix_path
 
 zip: release
-	tar cvzf vmwebadm-0.3.1.tar.bz2 vmwebadm
+	tar cvzf vmwebadm-0.3.2.tar.bz2 vmwebadm

@@ -1,6 +1,7 @@
 (ns server.machines.list
   (:use [server.utils :only [clj->js prn-js clj->json transform-keys prn]])
   (:require [server.vm :as vm]
+            [server.storage :as storage]
             [server.http :as http]))
 
 
@@ -43,7 +44,9 @@
   (let [qry (:query resource)
         q (transform-keys qry-map qry)]
     (vm/lookup
-     (assoc  q "owner_uuid" account)
+     (if (get-in @storage/data [:users account :admin])
+       q
+       (assoc  q "owner_uuid" account))
      {:full true}
      (fn [error vms]
        (if error

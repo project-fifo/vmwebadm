@@ -26,6 +26,9 @@
          " import pacakge <package-file(s)> - imports one or more pacakge files.\n"
          " default-dataset <dataset>        - sets the default dataset.\n"
          " passwd <user> <pass>             - adds a new user or resets a password for an existing one.\n"
+         " list users                       - lists all known users\n"
+         " promote <user>                   - grants a user admin rights.\n"
+         " demote <user>                    - demotes a user from admin rights.\n"
          " port <port>                      - sets the listen port for the server.\n"
          " host <host>                      - sets the listen host for the server.\n"))
 
@@ -38,6 +41,17 @@
     (print "updating package:" (pr-str p) "\n")
     (update-config #(assoc-in % [:packages name] p))))
 
+(defn format-users [[name u]]
+  (print (str  " [" (if (:admin u) "*" " ") "]   | " name "\n")))
+
+(defn list-users []
+  (print "Admin | User\n")
+  (print "------+-----------------------------------------------------\n")
+  (doall
+      (map
+       format-users
+       (:users (read "db.clj")))))
+
 (defn start [& args]
   (match [(vec args)]
          [["import" "package" & pkgs]]
@@ -48,6 +62,22 @@
          (update-config #(assoc-in % [:default-dataset] dataset))
          [["passwd" user passwd]]
          (update-config #(assoc-in % [:users user :passwd] (hash-str (str user ":" passwd))))
+         [["promote" user]]
+         (update-config #(if (get-in % [:users user])
+                           (assoc-in  % [:users user :admin] true)
+                           (do
+                             (print "Unknown user" (str user ".\n"))
+                             %)))
+         [["demote" user]]
+         (update-config #(if (get-in % [:users user])
+                           (assoc-in  % [:users user :admin] false)
+                           (do
+                             (print "Unknown user" (str user ".\n"))
+                             %)))
+         [["delete" user]]
+         (update-config #(update-in  % [:users] (fn [m] (dissoc m user))))
+         [["list" "users"]]
+         (list-users)
          [["port" port]]
          (update-config #(assoc-in % [:server :port] (js/parseInt port)))
          [["host" host]]
