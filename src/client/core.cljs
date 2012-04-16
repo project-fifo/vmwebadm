@@ -46,11 +46,14 @@
     (update-config #(assoc-in % [:packages name] p))))
 
 (defn format-users [[name u]]
-  (print (.format util " [%s]  | %s | %s\n" (if (:admin u) "*" " ") (:uuid u) name)))
+  (print (.format util " [%s]  | [%s] | %s | %s\n"
+                  (if (:admin u) "*" " ")
+                  (if (:keys u) "*" " ")
+                  (:uuid u) name)))
 
 (defn list-users []
-  (print "Admin | UUID                                 | Login\n")
-  (print "------+--------------------------------------+------------------------\n")
+  (print "Admin | Key | UUID                                 | Login\n")
+  (print "------+-----+--------------------------------------+------------------------\n")
   (doall
       (map
        format-users

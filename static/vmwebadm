@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+cd !DEPLOY_PATH!
+
+export NODE_PATH="/usr/ds/node_modules:jslib:/usr/vm/node_modules/:$NODE_PATH"
+
+start() {
+    if [ ! -f db.clj ]; then
+	cp data/db.clj.example db.clj
+    fi
+    node js/server.js &
+ #   echo $$ > vmwebadm.pid
+}
+
+debug() {
+    if [ ! -f db.clj ]; then
+	cp data/db.clj.example db.clj
+    fi
+    node js/server.js
+}
+
+#stop() {
+#    kill `cat vmwebadm.pid`
+#    rm vmwebadm.pid
+#}
+
+case $1 in
+    debug)
+        debug
+        ;;
+    start)
+	start
+	;;
+    install)
+	[ -d /opt/custom/smf/ ] || mkdir -p /opt/custom/smf/
+	[ -f /opt/custom/smf/vmwebadm.xml ] || cp data/vmwebadm.xml /opt/custom/smf/vmwebadm.xml 
+	svccfg import /opt/custom/smf/vmwebadm.xml
+	;;
+    disable)
+	svcadm disable vmwebadm
+	;;
+    enable)
+	svcadm enable vmwebadm
+	;;
+    restart)
+	svcadm disable vmwebadm
+	sleep 1
+	svcadm enable vmwebadm
+	;;
+    *)
+	echo "That isn't a supported command please use one of."
+	echo <<EOF
+install - installs the SMF service and enables it.
+enable  - enables the SMF service.
+disable - disables the SMF service.
+restart - disables and enables the service.
+debug   - starts vmwebadm in the forground to debug.
+==== Use with caution ====
+start   - starts vmwebadm in the background.
+EOF
+
+#    stop)
+#	stop
+#	;;
+#    restart)
+#	stop
+#	start
+#	;;
+esac
