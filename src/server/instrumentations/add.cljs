@@ -33,7 +33,11 @@
              {"owner_uuid" account}
              {:full false}
              (fn [error vms]
-               (let [code (handler vms data)]
+               (let [code (handler
+                           (if (get-in @storage/data [:users account :admin])
+                               :all
+                               vms)
+                           data)]
                  (print "=======DTRACE=======\n"
                         code
                         "\n====================\n"

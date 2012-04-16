@@ -186,15 +186,17 @@
    d m))
 
 (defn compile-zone-predicate [zones]
-  (str
-   "("
-   (reduce
-    (fn [s e]
-      (str  s "||" e ))
-    (map
-     #(str "zonename==\"" % "\"")
-     zones))
-   ")"))
+  (if (= zones :all)
+    "(1==1)"
+    (str
+     "("
+     (reduce
+      (fn [s e]
+        (str  s "||" e ))
+      (map
+       #(str "zonename==\"" % "\"")
+       zones))
+     ")")))
 
 (defn compile-predicate* [field-map predicate]
   (match [(first predicate)]
