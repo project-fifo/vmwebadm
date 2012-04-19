@@ -10,6 +10,10 @@ Note the account part is just grouping machines by the owner_uuid right now.
 Getting Started
 ===============
 
+Watch this first
+----------------
+http://www.youtube.com/watch?v=8dyAA-6Df-c
+
 Grab the SmartDC Tools
 ----------------------
 You can read the how to get started here: http://apidocs.joyent.com/sdcapidoc/cloudapi/#getting-started .
