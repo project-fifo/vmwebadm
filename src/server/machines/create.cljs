@@ -14,19 +14,22 @@
            (if-let [package (data "package")]
              (if (= (first package) "{")
                (js->clj (.parse js/JSON package))
-               (get-in @storage/data ["packages" package]))
+               (get-in @storage/data [:packages package]))
              (get @storage/data :default-dataset))]
-    (let [spec (assoc-if spec data "metadata")]
-      (if-let [dataset  (data "dataset")]
-        (if (= (spec "brand") "kvm")
-          (if-let [disks (spec "disks")]
-            (let [f (first disks)
-                  r (rest disks)
-                  disks
-                  (concat [(assoc f "image_uuid" dataset)] r)]
-              (assoc spec "disks" disks))
-            spec)
-          (assoc spec "dataset_uuid" dataset))
+    (let [spec (let [spec (assoc-if spec data "metadata")]
+                 (if-let [dataset  (data "dataset")]
+                   (if (= (spec "brand") "kvm")
+                     (if-let [disks (spec "disks")]
+                       (let [f (first disks)
+                             r (rest disks)
+                             disks
+                             (concat [(assoc f "image_uuid" dataset)] r)]
+                         (assoc spec "disks" disks))
+                       spec)
+                     (assoc spec "dataset_uuid" dataset))
+                   spec))]
+      (if-let [zonename (data "name")]
+        (assoc spec "zonename" zonename)
         spec))))
 
 (defn handle [resource request response login]
@@ -38,5 +41,5 @@
          (fn [error vm]
            (if error
              (http/e500 response (str  "Error in server.machien.create: "  (pr-str (js->clj error))))
-             (http/write response 200 {"Content-Type" "application/json"} (.stringify js/JSON vm)))))
+             (http/ret response vm))))
         (http/e404 response "Package not found")))))

@@ -6,7 +6,7 @@
 
 
 (def qry-map
-  {"name" "alias"
+  {"name" "zonename"
    "type" "brand"
    "dataset" "zfs_filesystem"
    "state" "state"
@@ -23,11 +23,7 @@
 
 (def res-map
   {"uuid" "id"
-   "alias" "name"
-   "zonename" (fn [m z]
-                (if (not (m "name"))
-                  (assoc m "name" z)
-                  m))
+   "zonename" "name"
    "brand" "type"
    "state" "state"
    "nics" (fn [m nics]

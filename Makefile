@@ -60,4 +60,4 @@ release_main:
 release: clean-release all release_pre release_main fix_path
 
 zip: release
-	tar cvzf vmwebadm-0.3.4.tar.bz2 vmwebadm
+	tar cvzf vmwebadm-0.3.5.tar.bz2 vmwebadm
