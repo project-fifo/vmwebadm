@@ -28,8 +28,7 @@
    dsadm
    (fn [error datasets]
      (let [datasets (js->clj datasets)]
-       (http/write response 200
-                   {"Content-Type" "application/json"}
-                   (clj->json (map
-                               make-map
-                               datasets)))))))
+       (http/ret response
+                 (map
+                  make-map
+                  datasets))))))

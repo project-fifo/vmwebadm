@@ -4,7 +4,6 @@
             [server.http :as http]))
 
 (defn handle [resource request response account id]
-  (http/write response 200
-              {"Content-Type" "application/json"}
-              (clj->json
-               (nth id (get-in @storage/instrumentations [account])))))
+  (if-let [i (nth id (get-in @storage/instrumentations [account]))]
+    (http/ret response i)
+    (http/e404 response "Instrumentation not found.")))

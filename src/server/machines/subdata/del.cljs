@@ -10,6 +10,5 @@
    {(str "remove_" key) [tag]}
    (fn [error resp]
      (if error
-       (http/error response error)
-       (http/ok response (clj->json {:tags (:query resource)
-                                     :resp resp}))))))
+       (http/e500 response error)
+       (http/ret response resp)))))

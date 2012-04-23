@@ -29,7 +29,9 @@
    (fn [m [q-name d]]
      (if-let [val (in q-name)]
        (if (fn? d)
-         (d m val)
+         (if-let [r (d m val)]
+           r
+           m)
          (assoc m d val))
        m))
    {}

@@ -10,11 +10,13 @@
    {:full true}
    (fn [error vms]
      (if error
-       (http/error response error)
-       (vm/update
-        uuid
-        {(str "remove_" key) (keys ((first vms) key))}
-        (fn [error resp]
-          (if error
-            (http/error response error)
-            (http/ok response (clj->json resp)))))))))
+       (http/e500 response error)
+       (if-let [vm (first vms)]
+         (vm/update
+          uuid
+          {(str "remove_" key) (keys (vm key))}
+          (fn [error resp]
+            (if error
+              (http/e500 response error)
+              (http/ret response resp))))
+         (http/e404 response "VM not found."))))))

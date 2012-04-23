@@ -8,5 +8,5 @@
    uuid
    (fn [error]
      (if error
-       (http/error response error)
-       (http/ok response)))))
+       (http/e500 response error)
+       (http/ret response "deleted.")))))

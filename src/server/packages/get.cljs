@@ -7,10 +7,8 @@
 
 (defn handle [resource request response name]
   (if-let [package (get-in @storage/data ["packages" name])]
-    (http/write response 200
-                {"Content-Type" "application/json"}
-                (clj->json
-                 (assoc
-                     (packages.list/prepare-response package)
-                   "name" name)))
-    (http/not-found response)))
+    (http/ret response
+              (assoc
+                  (packages.list/prepare-response package)
+                "name" name))
+    (http/e404 response)))

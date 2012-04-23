@@ -8,5 +8,5 @@
    uuid
    (fn [error _]
      (if error
-       (http/error response error)
-       (http/ok response)))))
+       (http/e500 response (str error))
+       (http/ret response "stopping.")))))

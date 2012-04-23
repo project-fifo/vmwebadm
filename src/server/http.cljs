@@ -8,7 +8,9 @@
   (node/require "http-signature"))
 
 (defn write [response code headers content]
-  (.writeHead response code (clj->js headers))
+  (.writeHead response code (clj->js (assoc headers
+                                       "X-Api-Version" "6.5.0"))
+              )
   (.end response content))
 
 (defn encode-error [msg e]
@@ -21,18 +23,34 @@
               {"Content-Type" "application/json"}
               "{\"result\": \"ok\"}"))
 
+
+
 (defn error
-  ([response e]
-     (error response 500 e))
-  ([response code e]
-     (write response code
-            {"Content-Type" "application/json"}
-            (clj->json {:error e}))))
+  ([response msg]
+     (error 500 "InternalError" msg))
+  ([response code e msg]
+      (write response code
+             {"Content-Type" "application/json"}
+             (clj->json {:code code
+                         :message e
+                         :details msg}))))
+
+(defn e404
+  ([response]
+     (e404 response ""))
+  ([response msg]
+     (error response 404 "ResourceNotFound" msg)))
+
+(defn e500 [response msg]
+  (error response 500 "InternalError" (str msg)))
+
+(defn ret [response data]
+  (write response 200
+         {"Content-Type" "application/json"}
+         (clj->json data)))
 
 (defn not-found [response]
-  (write response 404
-              {"Content-Type" "application/json"}
-              (clj->json {:error "not found"})))
+  (error response 404 "ResourceNotFound" "Something was not found."))
 
 (defn respond [content-type formater res content]
   (write res 200 {"Content-Type" content-type}
@@ -76,8 +94,8 @@
     (if (= (hash-str (base64-decode h))
            (get-in @storage/data [:users account :passwd]))
       (f)
-      (error response 401 "bad password or user"))
-    (error response 401 "auth header missing")))
+      (error response 401 "InvalidCredentials" "Bad password or user."))
+    (error response 401 "InvalidCredentials" "Auth header missing.")))
 
 (defn with-auth [resource request response account f]
   (try
@@ -90,13 +108,12 @@
         (if-let [pub (get-in @storage/data path)]
           (if (.verifySignature http-signature parsed pub)
             (f)
-            (error response 401 "verification failed"))
-          (error response 401 "key not found"))
-        (error response 401 "wrong pki user")))
+            (error response 401 "InvalidCredentials" "Key verification failed."))
+          (error response 401 "InvalidCredentials" "Key not found."))
+        (error response 401 "InvalidCredentials" "Wrong pki user.")))
     (catch js/Error e
       (try
-        (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
         (with-passwd-auth resource response account f)
         (catch js/Error e
           (print "\n==========\n\n"  (.-message e) "\n" (.-stack e) "\n==========\n\n")
-          (error response (encode-error "Error during not logged in dispatch." e)))))))
+          (e500 response (encode-error "Error during not logged in dispatch." e)))))))

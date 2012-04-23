@@ -5,9 +5,9 @@
    [server.http :as http]))
 
 (defn handle [resource request response account id]
+  (storage/init)
   (swap! storage/data update-in [:users account :keys] #(dissoc % id))
-  (http/write
-   response 200
-   {"Content-Type" "application/json"}
-   (clj->json
-    {"result" "ok"})))
+  (storage/save)
+  (http/ret
+   response
+   {"result" "ok"}))

@@ -5,8 +5,6 @@
    [server.http :as http]))
 
 (defn handle [resource request response account id]
-  (http/write
-   response 200
-   {"Content-Type" "application/json"}
-   (clj->json
-    (get-in @storage/data [:users account :keys id]))))
+  (if-let [key (get-in @storage/data [:users account :keys id])]
+    (http/ret response key)
+    (http/e404 response)))

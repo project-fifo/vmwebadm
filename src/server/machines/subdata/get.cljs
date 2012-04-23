@@ -10,7 +10,8 @@
    {:full true}
    (fn [error vms]
      (if error
-       (http/error response error)
-       (http/write response 200
-                   {"Content-Type" "application/json"}
-                   (clj->json (get-in (first vms) [key tag])))))))
+       (http/e500 response error)
+       (if-let [vm (first vms)]
+         (http/ret response
+                   (get-in vm [key tag]))
+         (http/e404 response "VM Not found."))))))

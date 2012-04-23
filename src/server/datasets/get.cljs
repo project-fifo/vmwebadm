@@ -12,10 +12,7 @@
    (fn [error dataset]
      (if dataset
        (let [dataset (js->clj dataset)]
-         (http/write response 200
-                     {"Content-Type" "application/json"}
-                     (clj->json (make-map dataset))))
-       (http/write response 404
-                   {"Content-Type" "application/json"}
-                   (clj->json
-                    {"not found" uuid}))))))
+         (http/ret response
+                   (make-map dataset)))
+       (http/e404 response
+                  "Dataset not found.")))))

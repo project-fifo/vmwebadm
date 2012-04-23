@@ -233,6 +233,6 @@
              (http/with-auth resource request response account
                #(packages.get/handle resource request response name)))
                                         ;fallback
-           [_ p _]    (http/write response 200
-                                  {"Content-Type" "application/json"}
-                                  (clj->json (str "Uhh can't find that" (pr-str response)))))))
+           [_ p _]
+           (http/e404
+            (str "Uhh can't find that: " (pr-str p))))))

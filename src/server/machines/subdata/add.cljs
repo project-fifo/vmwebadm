@@ -11,6 +11,5 @@
        {(str "set_" key) data}
        (fn [error resp]
          (if error
-           (http/error response error)
-           (http/ok response (clj->json {:qry (:query resource)
-                                         :resp resp}))))))))
+           (http/e500 response error)
+           (http/ret response resp)))))))

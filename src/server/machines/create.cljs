@@ -37,6 +37,6 @@
          (assoc spec "owner_uuid" (get-in @storage/data [:users login :uuid]))
          (fn [error vm]
            (if error
-             (http/error response {:msg "Error in server.machien.create" :err (js->clj error)})
-             (http/ok response (.stringify js/JSON  vm)))))
-        (http/error response (clj->json  {:error "Package not found"}))))))
+             (http/e500 response (str  "Error in server.machien.create: "  (pr-str (js->clj error))))
+             (http/write response 200 {"Content-Type" "application/json"} (.stringify js/JSON vm)))))
+        (http/e404 response "Package not found")))))

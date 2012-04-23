@@ -17,12 +17,11 @@
   (http/with-reqest-body request
     (fn [data]
       (if-let [spec (build-spec (:query resource))]
-        (do 
-          (vm/update
-           uuid
-           spec
-           (fn [error]
-             (if error
-               (http/error response error)
-               (http/ok response (clj->json {:response "ok"}))))))
-        (http/error response (clj->json  {:error "Package not found"}))))))
+        (vm/update
+         uuid
+         spec
+         (fn [error]
+           (if error
+             (http/e500 response (str error))
+             (http/ret response "ok"))))
+        (http/e404 response "Package not found")))))

@@ -6,7 +6,5 @@
 (def data-map {})
 
 (defn handle [resource request response account]
-  (http/write response 200
-              {"Content-Type" "application/json"}
-              (clj->json
-               (map #(dissoc % :consumer) (get-in @storage/instrumentations [account])))))
+  (http/ret response
+            (map #(dissoc % :consumer) (get-in @storage/instrumentations [account]))))

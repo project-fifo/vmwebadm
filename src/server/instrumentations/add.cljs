@@ -10,50 +10,53 @@
 (defn handle [resource request response account]
   (http/with-reqest-body request
     (fn [data]
-      (if-let [clone (data "clone")]
-        (let [clone (js/parseInt clone)]
-          (swap! storage/instrumentations update-in [account]
-                 #(conj % (nth % clone)))
-          (http/write response 200
-                      {"Content-Type" "application/json"}
-                      (clj->json (get-in @storage/instrumentations [account clone]))))
-        
-        (if-let [handler (get-in @dtrace/handler [(data "module")
-                                                  (data "stat")])]
-          (let [data (if (data "predicate")
-                       (assoc data "predicate" (js->clj
-                                                (.parse
-                                                 js/JSON
-                                                 (data "predicate"))))
-                       data)
-                consumer (dtrace/new)
-                data (assoc data
-                       :consumer consumer)]
-            (vm/lookup
-             {"owner_uuid" account}
-             {:full false}
-             (fn [error vms]
-               (let [code (handler
-                           (if (get-in @storage/data [:users account :admin])
+      (if (map? data)
+        (if-let [clone (data "clone")]
+          (let [clone (js/parseInt clone)]
+            (if (map? (getstorage/instrumentations account))
+              (swap! storage/instrumentations update-in [account]
+                     #(conj % (nth % clone)))
+              (http/e404 response
+                         "Instrumentation to clone not found."))
+            (http/ret response
+                      (get-in @storage/instrumentations [account clone])))
+          
+          (if-let [handler (get-in @dtrace/handler [(data "module")
+                                                    (data "stat")])]
+            (let [data (if (data "predicate")
+                         (assoc data "predicate" (js->clj
+                                                  (.parse
+                                                   js/JSON
+                                                   (data "predicate"))))
+                         data)
+                  consumer (dtrace/new)
+                  data (assoc data
+                         :consumer consumer)]
+              (vm/lookup
+               {"owner_uuid" account}
+               {:full false}
+               (fn [error vms]
+                 (let [code (handler
+                             (if (get-in @storage/data [:users account :admin])
                                :all
                                vms)
-                           data)]
-                 (print "=======DTRACE=======\n"
-                        code
-                        "\n====================\n"
-                        "\n")
-                 (dtrace/compile consumer code)
-                 (dtrace/start consumer))))
-            (swap! storage/instrumentations (fn [insts]
-                                  (update-in
-                                   insts
-                                   [account]
-                                   #(vec (conj % data)))))
-            (http/write response 200
-                        {"Content-Type" "application/json"}
-                        (clj->json {:data (dissoc
-                                           data
-                                           :consumer)})))
-          (http/write response 500
-                      {"Content-Type" "application/json"}
-                      (clj->json {:error "unknown metric"})))))))
+                             data)]
+                   (print "=======DTRACE=======\n"
+                          code "\n"
+                          "====================\n"
+                          "\n")
+                   (dtrace/compile consumer code)
+                   (dtrace/start consumer))))
+              (swap! storage/instrumentations (fn [insts]
+                                                (update-in
+                                                 insts
+                                                 [account]
+                                                 #(vec (conj % data)))))
+              (http/ret response
+                        {:data (dissoc
+                                data
+                                :consumer)}))
+            (http/e404 response
+                       "unknown metric"))))
+            (http/e404 response
+                       "unknown parameters"))))

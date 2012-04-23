@@ -14,10 +14,8 @@
     :unit "unit"})
 
 (defn handle [resource request response account]
-  (http/write response 200
-              {"Content-Type" "application/json"}
-              (clj->json
-               {:modules (dtrace/desc-modules)
-                :fields (dtrace/desc-fields)
-                :metrics (map #(transform-keys metrics-map %) (@dtrace/desc :metrics))
-                :transformations {}})))
+  (http/ret response
+            {:modules (dtrace/desc-modules)
+             :fields (dtrace/desc-fields)
+             :metrics (map #(transform-keys metrics-map %) (@dtrace/desc :metrics))
+             :transformations {}}))
