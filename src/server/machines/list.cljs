@@ -1,9 +1,12 @@
 (ns server.machines.list
   (:use [server.utils :only [clj->js prn-js clj->json transform-keys prn]])
   (:require [server.vm :as vm]
+            [cljs.nodejs :as node]
             [server.storage :as storage]
             [server.http :as http]))
 
+(def dsadm
+  (node/require "dsadm"))
 
 (def qry-map
   {"name" "zonename"
@@ -36,8 +39,8 @@
                     (reduce
                      + 
                      (map #(/ (get % "size") 1024) disks))))
-   "create_timestamp" "create"
-   "zfs_filesystem" "dataset" 
+   "create_timestamp" "created"
+   "dataset_uuid" "dataset"
    })
 
 (defn handle [resource request response account]
@@ -56,8 +59,21 @@
                vms (drop offset vms)
                vms (if limit (take limit vms) vms)
                cnt (count vms)]
-           (http/write response 200
-                       {"Content-Type" "application/json"
-                        "x-resource-count" cnt
-                        "x-query-limit" (or limit (inc cnt))}
-                       (clj->json (map (partial transform-keys res-map) vms)))))))))
+           (.listLocal
+            dsadm
+            (fn [error datasets]
+              (let [datasets (js->clj datasets)
+                    ds-map (reduce (fn [m ds]
+                                     (assoc m (ds "uuid") (ds "urn")))
+                                   {}
+                                   datasets)]
+                (http/write response 200
+                            {"Content-Type" "application/json"
+                             "x-resource-count" cnt
+                             "x-query-limit" (or limit (inc cnt))}
+                            (clj->json (map
+                                        (fn [m]
+                                          (if-let [d (m "dataset")]
+                                            (assoc m "dataset" (ds-map d))
+                                            m))
+                                        (map (partial transform-keys res-map) vms)))))))))))))
