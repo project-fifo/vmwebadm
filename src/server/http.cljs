@@ -9,7 +9,8 @@
 
 (defn write [response code headers content]
   (.writeHead response code (clj->js (assoc headers
-                                       "X-Api-Version" "6.5.0"))
+                                       "X-Api-Version" "6.5.0"
+                                       "X-Bark-Version" "0.1.0"))
               )
   (.end response content))
 

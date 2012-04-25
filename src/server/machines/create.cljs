@@ -4,6 +4,8 @@
             [server.http :as http]
             [server.storage :as storage]))
 
+
+
 (defn- assoc-if [m m1 k]
   (if-let [v (m1 "metadata")]
     (assoc m "metadata" v)
@@ -27,9 +29,16 @@
                          (assoc spec "disks" disks))
                        spec)
                      (assoc spec "dataset_uuid" dataset))
-                   spec))]
-      (if-let [zonename (data "name")]
-        (assoc spec "zonename" zonename)
+                   spec))
+          spec (assoc
+                   (if-let [zonename (data "name")]
+                     (assoc spec
+                       "zonename" zonename)
+                     spec)
+                 "nics"  [(assoc (storage/next-ip :admin)
+                            "primary" true)])]
+      (if (get-in @storage/data [:network :ext])
+        (update-in spec ["nics"] conj (storage/next-ip :ext))
         spec))))
 
 (defn handle [resource request response login]

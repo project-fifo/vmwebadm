@@ -32,6 +32,8 @@
          " default-dataset <dataset>        - sets the default dataset.\n"
          " passwd <user> <pass>             - adds a new user or resets a password for an existing one.\n"
          " list users                       - lists all known users\n"
+         " admin network <net/mask> gw <gw> - defines the ip range for the admin network.\n"
+         " ext network <net/mask> gw <gw>   - defines the ip range for the admin network.\n"
          " promote <user>                   - grants a user admin rights.\n"
          " demote <user>                    - demotes a user from admin rights.\n"
          " delete <user>                    - deletes a user.\n"
@@ -71,6 +73,47 @@
                   (assoc-in % [:users user :passwd] (hash-str (str user ":" passwd)))
                   [:users user :uuid] uuid)))))))
 
+(defn bit [x n] 
+  (bit-and (bit-shift-right x (* n 8)) 0xFF))
+
+(defn to-bytes [x]
+  [(bit x 3) (bit x 2) (bit x 1) (bit x 0)])
+
+(defn to-ip [x]
+  (let [[a b c d] (to-bytes x)]
+    (str a "." b "." c "." d)))
+
+(defn from-bytes [a b c d]
+  (+ (bit-shift-left a 24)
+     (bit-shift-left b 16)
+     (bit-shift-left c 8)
+     d))
+	
+(defn mask [x] 
+  (let [n (- 32 x)] 
+    (bit-shift-left (bit-shift-right  0xFFFFFFFF n) n)))
+
+(defn from-ip [ip]
+  (apply from-bytes (map #(js/parseInt %) (rest (re-matches #"(\d+)\.(\d+)\.(\d+)\.(\d+)" ip)))))
+
+(defn range [net] 
+  (let [[a b c d n]
+        (map #(js/parseInt %) (rest (re-matches #"(\d+)\.(\d+)\.(\d+)\.(\d+)/(\d+)" net)))
+        x (from-bytes a b c d)
+	m (mask n)
+        base (bit-and x m)
+        last (+ base (bit-not m))]
+    {:network base
+     :mask m
+     :first (inc base)
+     :last (dec last)
+     :free []
+     :broadcast last}))
+
+(defn network [net gw] 
+  (assoc (range net)
+    :gw (from-ip gw)))
+
 (defn start [& args]
   (if (empty? args)
     (help)
@@ -79,6 +122,10 @@
            (do
              (print "packages: " (pr-str pkgs) "\n")
              (doseq [pkg pkgs] (import-pacakge pkg)))
+           [["admin" "network" net "gw" gw]]
+           (update-config #(assoc-in % [:network :admin] (network net gw)))
+           [["ext" "network" net "gw" gw]]
+           (update-config #(assoc-in % [:network :ext] (network net gw)))
            [["default-dataset" dataset]]
            (update-config #(assoc-in % [:default-dataset] dataset))
            [["passwd" user passwd]]
