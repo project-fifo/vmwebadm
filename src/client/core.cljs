@@ -28,7 +28,7 @@
 
 (defn help []
   (print "Configuration tool\n"
-         " import pacakge <package-file(s)> - imports one or more pacakge files.\n"
+         " import package <package-file(s)> - imports one or more package files.\n"
          " default-dataset <dataset>        - sets the default dataset.\n"
          " passwd <user> <pass>             - adds a new user or resets a password for an existing one.\n"
          " list users                       - lists all known users\n"
