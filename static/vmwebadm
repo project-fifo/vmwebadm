@@ -32,7 +32,7 @@ case $1 in
 	;;
     install)
 	[ -d /opt/custom/smf/ ] || mkdir -p /opt/custom/smf/
-	[ -f /opt/custom/smf/vmwebadm.xml ] || cp data/vmwebadm.xml /opt/custom/smf/vmwebadm.xml 
+	[ -f /opt/custom/smf/vmwebadm.xml ] || cp data/vmwebadm.xml /opt/custom/smf/vmwebadm.xml
 	svccfg import /opt/custom/smf/vmwebadm.xml
 	;;
     disable)
@@ -48,7 +48,7 @@ case $1 in
 	;;
     *)
 	echo "That isn't a supported command please use one of."
-	echo <<EOF
+	cat <<EOF
 install - installs the SMF service and enables it.
 enable  - enables the SMF service.
 disable - disables the SMF service.
