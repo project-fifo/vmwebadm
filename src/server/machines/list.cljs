@@ -9,7 +9,7 @@
   (node/require "dsadm"))
 
 (def qry-map
-  {"name" "zonename"
+  {"name" "alias"
    "type" "brand"
    "dataset" "zfs_filesystem"
    "state" "state"
@@ -26,7 +26,10 @@
 
 (def res-map
   {"uuid" "id"
-   "zonename" "name"
+   "alias" "name"
+   "zonename" (fn [m name]
+                (if (not (m "name"))
+                  (assoc m "name" name)))
    "brand" "type"
    "state" "state"
    "nics" (fn [m nics]

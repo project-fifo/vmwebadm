@@ -31,9 +31,9 @@
                      (assoc spec "dataset_uuid" dataset))
                    spec))
           spec (assoc
-                   (if-let [zonename (data "name")]
+                   (if-let [alias (data "name")]
                      (assoc spec
-                       "zonename" zonename)
+                       "alias" alias)
                      spec)
                  "nics"  [(assoc (storage/next-ip :admin)
                             "primary" true)])]
@@ -50,5 +50,5 @@
          (fn [error vm]
            (if error
              (http/e500 response (str  "Error in server.machien.create: "  (pr-str (js->clj error))))
-             (http/ret response vm))))
+             (http/ret response (assoc vm "zonename" (or (spec "alias") (vm "zonename")))))))
         (http/e404 response "Package not found")))))
