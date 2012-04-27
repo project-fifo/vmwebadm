@@ -2,9 +2,11 @@
   (:require
    [server.vm :as vm]
    [server.http :as http]
+   [server.storage :as storage]
    
    [server.machines.list :as machines.list]
    [server.machines.get :as machines.get]
+   [server.machines.info :as machines.info]
    [server.machines.stop :as machines.stop]
    [server.machines.create :as machines.create]
    [server.machines.start :as machines.start]
@@ -43,7 +45,8 @@
    [clojure.core.match.js :only [match]]))
 
 (defn dispatch [resource request response]
-  (print "resource:" (pr-str resource) "\n")
+  (if (>= (get @storage/data :debug 0) 3)
+    (print "resource:" (pr-str resource) "\n"))
   (let [ext (:ext resource)
         method (:method resource)
         path (:resource resource)
@@ -135,6 +138,11 @@
              (print "machines.get" (pr-str path) "\n")
              (http/with-auth resource request response account
                #(machines.get/handle resource request response uuid)))
+           ["GET" [account "machines" uuid "info"] _]
+           (do
+             (print "machines.info" (pr-str path) "\n")
+             (http/with-auth resource request response account
+               #(machines.info/handle resource request response uuid)))
            ["DELETE" [account "machines" uuid] _]
            (do
              (print "machines.del" (pr-str path) "\n")

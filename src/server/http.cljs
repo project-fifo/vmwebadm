@@ -10,8 +10,7 @@
 (defn write [response code headers content]
   (.writeHead response code (clj->js (assoc headers
                                        "X-Api-Version" "6.5.0"
-                                       "X-Bark-Version" "0.1.0"))
-              )
+                                       "X-Bark-Version" "0.1.0")))
   (.end response content))
 
 (defn encode-error [msg e]
@@ -23,8 +22,6 @@
   (write response 200
               {"Content-Type" "application/json"}
               "{\"result\": \"ok\"}"))
-
-
 
 (defn error
   ([response msg]
@@ -41,6 +38,12 @@
      (e404 response ""))
   ([response msg]
      (error response 404 "ResourceNotFound" msg)))
+
+(defn e405
+  ([response]
+     (e405 response ""))
+  ([response msg]
+     (error response 405 "MethodNotAllowed" msg)))
 
 (defn e500 [response msg]
   (error response 500 "InternalError" (str msg)))

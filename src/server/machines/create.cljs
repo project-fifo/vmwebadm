@@ -6,9 +6,9 @@
 
 
 
-(defn- assoc-if [m m1 k]
-  (if-let [v (m1 "metadata")]
-    (assoc m "metadata" v)
+(defn- assoc-if [m m1 from-k to-k]
+  (if-let [v (m1 from-k)]
+    (assoc m to-k v)
     m))
 
 (defn- build-spec [data]
@@ -18,7 +18,7 @@
                (js->clj (.parse js/JSON package))
                (get-in @storage/data [:packages package]))
              (get @storage/data :default-dataset))]
-    (let [spec (let [spec (assoc-if spec data "metadata")]
+    (let [spec (let [spec (assoc-if spec data "metadata" "customer_metadata")]
                  (if-let [dataset  (data "dataset")]
                    (if (= (spec "brand") "kvm")
                      (if-let [disks (spec "disks")]
@@ -41,14 +41,20 @@
         (update-in spec ["nics"] conj (storage/next-ip :ext))
         spec))))
 
+(defn add-keys [login data]
+  (assoc-in data ["customer_metadata" "root_authorized_keys"]
+            (map (fn [[k v]] (:ssh v))
+                 (get-in @storage/data [:users login :keys]))))
+
 (defn handle [resource request response login]
   (http/with-reqest-body request
     (fn [data]
       (if-let [spec (build-spec data)]
-        (vm/create
-         (assoc spec "owner_uuid" (get-in @storage/data [:users login :uuid]))
-         (fn [error vm]
-           (if error
-             (http/e500 response (str  "Error in server.machien.create: "  (pr-str (js->clj error))))
-             (http/ret response (assoc vm "zonename" (or (spec "alias") (vm "zonename")))))))
+        (let [spec (add-keys login spec)]
+          (vm/create
+           (assoc spec "owner_uuid" (get-in @storage/data [:users login :uuid]))
+           (fn [error vm]
+             (if error
+               (http/e500 response (str  "Error in server.machien.create: "  (pr-str (js->clj error))))
+               (http/ret response (assoc vm "zonename" (or (spec "alias") (vm "zonename"))))))))
         (http/e404 response "Package not found")))))
