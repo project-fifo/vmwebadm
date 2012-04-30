@@ -6,8 +6,11 @@
    [cljs.nodejs :as node]))
 
 (def fs (node/require "fs"))
+
 (def crypto (node/require "crypto"))
+
 (def util (node/require "util"))
+
 (def cp
   (node/require "child_process"))
 
@@ -17,6 +20,9 @@
 
 (defn read [f]
   (reader/read-string (slurp f)))
+
+(defn get-option [path default]
+  (get-in (read "db.clj") path default))
 
 (defn update-config [update-fn]
   (.writeFileSync fs "db.clj" (pr-str (update-fn (read "db.clj")))))
@@ -37,8 +43,11 @@
          " promote <user>                   - grants a user admin rights.\n"
          " demote <user>                    - demotes a user from admin rights.\n"
          " delete <user>                    - deletes a user.\n"
+         " debug <level>                    - sets log level.\n"
          " port <port>                      - sets the listen port for the server.\n"
-         " host <host>                      - sets the listen host for the server.\n"))
+         " host <host>                      - sets the listen host for the server.\n"
+         " show [debug|host|port]           - shows the configuration options.\n"
+         ))
 
 (defn import-pacakge [p]
   (let [p (read p)
@@ -146,10 +155,18 @@
            (update-config #(update-in  % [:users] (fn [m] (dissoc m user))))
            [["list" "users"]]
            (list-users)
+           [["debug" lvl]]
+           (update-config #(assoc-in % [:debug] (js/parseInt lvl)))           
            [["port" port]]
            (update-config #(assoc-in % [:server :port] (js/parseInt port)))
            [["host" host]]
            (update-config #(assoc-in % [:server :host] host))
+           [["show" "debug"]]
+           (print "debug:" (get-option [:debug] 0) "\n")
+           [["show" "port"]]
+           (print "port:" (get-option [:server :port] 80) "\n")
+           [["show" "host"]]
+           (print "host:" (get-option [:server :host] "0.0.0.0") "\n")
            [["help"]]
            (help)
            :else

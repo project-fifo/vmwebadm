@@ -1,6 +1,7 @@
 (ns server.utils
   (:require
    [cljs.nodejs :as node]
+   [server.storage :as storage]
    [clojure.string :as c.s]))
 
 (def crypto (node/require "crypto"))
@@ -23,6 +24,10 @@
 
 (defn clj->json [c]
   (.stringify js/JSON (clj->js c)))
+
+(defn log [lvl & strs]
+  (if (>= (get @storage/data :debug 0) lvl)
+    (print (str "[LOG - " lvl "]") (apply str strs) "\n")))
 
 (defn transform-keys [key-map in]
   (reduce

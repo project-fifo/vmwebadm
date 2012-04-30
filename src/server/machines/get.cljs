@@ -9,7 +9,6 @@
    {"uuid" uuid}
    {:full true}
    (fn [error vms]
-     (pr vms)
      (if error
        (http/error response error)
        (if-let [vm (first vms)]
