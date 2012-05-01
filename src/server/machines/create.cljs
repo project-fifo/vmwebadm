@@ -28,7 +28,8 @@
              (get @storage/data :default-dataset))]
     (let [spec (let [spec (assoc
                               (assoc-if spec data "metadata" "customer_metadata")
-                            :brand (get-brand (dataset "os")))]
+                            :brand (get-brand (dataset "os"))
+                            :resolvers (get @storage/data :resolvers))]
                  (if-let [dataset  (data "dataset")]
                    (if (= (spec :brand) "kvm")
                      (let [spec (if (and (spec :quota) (empty? (spec :disks)))
@@ -36,7 +37,7 @@
                                          [{"size" (* (spec :quota) 1024)
                                            "boot" true}])
                                   spec)
-
+                           
                            ram (get spec :max_physical_memory)
                            spec (assoc spec "ram" ram
                                        :max_physical_memory (+ ram 1024))]

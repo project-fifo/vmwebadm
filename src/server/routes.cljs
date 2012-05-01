@@ -22,6 +22,8 @@
    [server.packages.list :as packages.list]
    [server.packages.get :as packages.get]
 
+   [server.images.list :as images.list]
+   
    [server.keys.list :as keys.list]
    [server.keys.get :as keys.get]
    [server.keys.add :as keys.add]
@@ -45,7 +47,7 @@
    [clojure.core.match.js :only [match]]))
 
 (defn dispatch [resource request response]
-  (log 3 "resource:" (pr-str resource))
+  (log 4 "resource:" (pr-str resource))
   (let [ext (:ext resource)
         method (:method resource)
         path (:resource resource)
@@ -58,7 +60,7 @@
     (match [method path query]
            [_ [""] _]
            (http/response-text response "root")
-
+           
                                         ;keys
            ["GET" [account "keys"] _]
            (do
@@ -239,6 +241,13 @@
              (log 2 "packages.get" (pr-str path))
              (http/with-auth resource request response account
                #(packages.get/handle resource request response name)))
+
+           ["GET" [account "images"] _]
+           (do
+             (log 2 "images.list" (pr-str path))
+             (http/with-auth resource request response account
+               #(images.list/handle resource request response)))
+
                                         ;fallback
            [_ p _]
            (http/e404

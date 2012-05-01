@@ -2,10 +2,13 @@
   (:require [clojure.string :as c.s]
             [server.storage :as storage]
             [cljs.nodejs :as node])
-  (:use [server.utils :only [clj->js prn-js clj->json nestify-map base64-decode hash-str]]))
+  (:use [server.utils :only [clj->js prn-js clj->json nestify-map base64-decode hash-str log]]))
 
 (def http-signature
   (node/require "http-signature"))
+
+(def querystring
+  (node/require "querystring"))
 
 (defn write [response code headers content]
   (.writeHead response code (clj->js (assoc headers
@@ -82,16 +85,23 @@
   (get ext-map ext res-json))
 
 (defn with-reqest-body [request callback]
-  (let [body (atom "")]
+  (let [body (atom "")
+        headers (js->clj (.-headers request))]
     (.on request "data"
          (fn [data]
            (swap! body str data)))
     (.on request "end"
          (fn []
-           (let [r (if (= @body "")
+           (let [
+                 r (if (= @body "")
                      {}
-                     (nestify-map (js->clj (.parse js/JSON @body))))]
-             (callback r ))))))
+                     (nestify-map (js->clj
+                                   (if (= (headers "content-type")
+                                          "application/x-www-form-urlencoded")
+                                     (.parse querystring @body)
+                                     (.parse js/JSON @body)))))]
+             (log 4 "Body - "(pr-str r))
+             (callback r))))))
 
 (defn with-passwd-auth [resource response account f]
   (if-let [h (second (c.s/split (get-in resource [:headers "authorization"] "") #" "))]

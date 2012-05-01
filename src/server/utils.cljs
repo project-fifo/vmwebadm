@@ -25,9 +25,35 @@
 (defn clj->json [c]
   (.stringify js/JSON (clj->js c)))
 
+
+(def log-syms
+  {:error 1
+   :warning 2
+   :info 3
+   :debug 4})
+
+(defn- lvl-to-str [lvl]
+  (if-let [e (get ["ALL "
+                   "ERR "
+                   "WARN"
+                   "INFO"
+                   "DBG "] lvl)]
+    e
+    (str "LVL" lvl)))
+
 (defn log [lvl & strs]
-  (if (>= (get @storage/data :debug 0) lvl)
-    (print (str "[LOG - " lvl "]") (apply str strs) "\n")))
+  (let [lvl (if (number? lvl)
+              lvl
+              (log-syms lvl))]
+    (if (>= (get @storage/data :debug 0) lvl)
+      (print (str "[" (lvl-to-str lvl) "]") (apply str strs) "\n"))))
+
+
+(defn log-exception [strs]
+  (apply log :error strs))
+
+(defn log-error [strs]
+  (apply log :error strs))
 
 (defn transform-keys [key-map in]
   (reduce

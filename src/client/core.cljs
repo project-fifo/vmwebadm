@@ -14,7 +14,6 @@
 (def cp
   (node/require "child_process"))
 
-
 (defn slurp [f]
   (str (.readFileSync fs f)))
 
@@ -46,6 +45,7 @@
          " debug <level>                    - sets log level.\n"
          " port <port>                      - sets the listen port for the server.\n"
          " host <host>                      - sets the listen host for the server.\n"
+         " resolvers add <ip>               - adds a resolver.\n"
          " show [debug|host|port]           - shows the configuration options.\n"
          ))
 
@@ -161,6 +161,8 @@
            (update-config #(assoc-in % [:server :port] (js/parseInt port)))
            [["host" host]]
            (update-config #(assoc-in % [:server :host] host))
+           [["resolvers" "add" ip]]
+           (update-config #(update-in % [:resolvers] conj ip))
            [["show" "debug"]]
            (print "debug:" (get-option [:debug] 0) "\n")
            [["show" "port"]]

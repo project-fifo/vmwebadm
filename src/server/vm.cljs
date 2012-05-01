@@ -1,5 +1,5 @@
 (ns server.vm
-  (:use [server.utils :only [clj->js]])
+  (:use [server.utils :only [clj->js log]])
   (:require [cljs.nodejs :as node]))
 
 (defn wrap-callback [callback]
