@@ -1,2 +1,1 @@
-{
-}
+{:resolvers ("4.4.4.4" "8.8.8.8"), :server {:host "127.0.0.1"}, :users {"admin" {:passwd "ZwUGybZzdQB+G1DWmAheVLzW6Lxqf+ziqQf/Qrg6kmmBR0YN7mbBhWrJd3h1x/Dlse2sV0hueoQTEepr7rI1og==", :admin true, :uuid "deb9dc42-948f-11e1-af43-47432f3589b9"}}, :packages {"small-zone" {:zfs_io_priority 10, :max_physical_memory 256, :nowait true, :brand "joyent", :quota 5}, "large-zone" {:zfs_io_priority 30, :max_physical_memory 1024, :nowait true, :brand "joyent", :quota 20}, "medium-zone" {:zfs_io_priority 20, :max_physical_memory 512, :nowait true, :brand "joyent", :quota 10}}}
