@@ -28,13 +28,11 @@ run: all
 
 server:
 	$(CLOJURESCRIPT_HOME)/bin/cljsc $(SERVER_FILES) \
-	'{:optimizations :simple :pretty-print true :target :nodejs\
-          :output-dir "out/server" :output-to "out/server/server.js"}'
+	'{:optimizations :simple :pretty-print true :target :nodejs :output-dir "out/server" :output-to "out/server/server.js"}'
 
 client:
 	$(CLOJURESCRIPT_HOME)/bin/cljsc $(CLIENT_FILES) \
-	'{:optimizations :simple :pretty-print true :target :nodejs\
-          :output-dir "out/client" :output-to "out/client/client.js"}'
+	'{:optimizations :simple :pretty-print true :target :nodejs :output-dir "out/client" :output-to "out/client/client.js"}'
 
 deploy: release all
 	scp -r $(RELEASE_NAME) $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
