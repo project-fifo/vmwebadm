@@ -25,7 +25,6 @@
 (defn clj->json [c]
   (.stringify js/JSON (clj->js c)))
 
-
 (def log-syms
   {:error 1
    :warning 2
