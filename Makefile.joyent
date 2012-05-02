@@ -1,10 +1,11 @@
 world:
 	echo "Building world"
+	gmake bootstrap
 	gmake release
 
 update:
 	git pull --rebase
-	gmake bootstrap
+
 
 manifest:
 	cp static/manifest $(DESTDIR)/$(DESTNAME)
