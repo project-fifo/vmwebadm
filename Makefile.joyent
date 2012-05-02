@@ -1,6 +1,6 @@
 world:
 	echo "Building world"
-	gmake rel
+	gmake release
 
 update:
 	git pull --rebase
