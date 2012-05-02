@@ -1,6 +1,8 @@
 (ns server.storage
   (:require [cljs.nodejs :as node]
             [cljs.reader :as reader]))
+ 
+(def dbfile "/var/db/vmwebadm/db.clj")
 
 (defn- bit [x n] 
   (bit-and (bit-shift-right x (* n 8)) 0xFF))
@@ -32,7 +34,7 @@
   (str (.readFileSync fs file)))
 
 (defn save []
-  (.writeFileSync fs "db.clj" (pr-str @data)))
+  (.writeFileSync fs dbfile (pr-str @data)))
 
 
 
@@ -74,7 +76,7 @@
      "gateway" (to-ip gw)}))
 
 (defn init []
-  (reset! data (js->clj (reader/read-string (slurp "db.clj")))))
+  (reset! data (js->clj (reader/read-string (slurp dbfile)))))
 
 (js/setInterval
  init (* 30 1000))

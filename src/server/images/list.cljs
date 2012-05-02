@@ -12,7 +12,7 @@
 (defn handle [resource request response account]
   (.readdir
    fs
-   "data/images"
+   "/var/db/vmwebadm/images"
    (fn [error images]
      (log 4 (pr-str images))
      (http/ret response

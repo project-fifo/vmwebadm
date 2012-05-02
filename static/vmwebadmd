@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+export NODE_PATH="/usr/ds/node_modules:!DEPLOY_PATH!/jslib:/usr/vm/node_modules/:$NODE_PATH"
+
+start() {
+    if [ ! -f /var/db/vmwebadm/db.clj ]; then
+	mkdir -p /var/db/vmwebadm/images
+	cp !DEPLOY_PATH!/data/db.clj.example /var/db/vmwebadm/db.clj
+    fi
+    node !DEPLOY_PATH!/js/server.js &
+}
+
+debug() {
+    if [ ! -f /var/db/vmwebadm/db.clj ]; then
+	mkdir -p /var/db/vmwebadm/images
+	cp !DEPLOY_PATH!/data/db.clj.example /var/db/vmwebadm/db.clj
+    fi
+    node !DEPLOY_PATH!/js/server.js
+}
+
+case $1 in
+    debug)
+        debug
+        ;;
+    start)
+	start
+	;;
+    install)
+	[ -d /opt/custom/smf/ ] || mkdir -p /opt/custom/smf/
+	[ -f /opt/custom/smf/vmwebadmd.xml ] || cp data/vmwebadmd.xml /opt/custom/smf/vmwebadm.xml
+	svccfg import /opt/custom/smf/vmwebadmd.xml
+	;;
+    disable)
+	svcadm disable vmwebadmd
+	;;
+    enable)
+	svcadm enable vmwebadmd
+	;;
+    restart)
+	svcadm disable vmwebadmd
+	sleep 1
+	svcadm enable vmwebadmd
+	;;
+    *)
+	echo "That isn't a supported command please use one of."
+	cat <<EOF
+install - installs the SMF service and enables it.
+enable  - enables the SMF service.
+disable - disables the SMF service.
+restart - disables and enables the service.
+debug   - starts vmwebadm in the forground to debug.
+==== Use with caution ====
+start   - starts vmwebadm in the background.
+EOF
+esac

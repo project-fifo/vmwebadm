@@ -1,0 +1,11 @@
+for i in `find overlay`
+do
+  file=`echo $i| sed -e 's;^overlay/;;'`
+  perm=`ls -l $i  | awk '{k=0;for(i=0;i<=8;i++)k+=((substr($1,i+2,1)~/[rwx]/)*2^(8-i));if(k)printf("0%0o\n",k)}' | head -n 1`
+  if [ -d $i ]
+  then
+  	echo d $file $perm root sys
+  else
+  	echo f $file $perm root sys
+  fi
+done

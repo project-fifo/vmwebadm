@@ -39,7 +39,7 @@
              (http/error response error)
              (if-let [vm (first vms)]
                (let [iso (str image ".iso")
-                     from-file (str "data/images/" iso)
+                     from-file (str "/var/db/vmwebadm/images/" iso)
                      to-file (str (vm "zonepath") "/root/boot.iso")
                      oldFile (.createReadStream fs from-file)
                      newFile (.createWriteStream fs to-file)]

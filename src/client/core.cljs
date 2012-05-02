@@ -5,6 +5,7 @@
    [clojure.string :as c.s]
    [cljs.nodejs :as node]))
 
+(def dbfile "/var/db/vmwebadm/db.clj")
 (def fs (node/require "fs"))
 
 (def crypto (node/require "crypto"))
@@ -21,10 +22,10 @@
   (reader/read-string (slurp f)))
 
 (defn get-option [path default]
-  (get-in (read "db.clj") path default))
+  (get-in (read dbfile) path default))
 
 (defn update-config [update-fn]
-  (.writeFileSync fs "db.clj" (pr-str (update-fn (read "db.clj")))))
+  (.writeFileSync fs dbfile (pr-str (update-fn (read dbfile)))))
 
 (defn hash-str [str]
   (-> ( .createHash crypto "sha512")
@@ -68,7 +69,7 @@
   (doall
       (map
        format-users
-       (:users (read "db.clj")))))
+       (:users (read dbfile)))))
 
 (defn passwd-user [user passwd]
   (.exec cp

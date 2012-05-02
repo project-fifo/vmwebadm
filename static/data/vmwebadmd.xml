@@ -4,9 +4,9 @@
         Copyright 2012 Heinz N. Gies
 -->
 
-<service_bundle type='manifest' name='vmwebadm'>
+<service_bundle type='manifest' name='vmwebadmd'>
   <service
-    name='network/vmwebadm'
+    name='network/vmwebadmd'
     type='service'
     version='1'>
     <create_default_instance enabled='true' />
@@ -37,7 +37,7 @@
     <exec_method
       type='method'
       name='start'
-      exec='!DEPLOY_PATH!/vmwebadm %m'
+      exec='!DEPLOY_PATH!/vmwebadmd %m'
       timeout_seconds='30'>
     </exec_method>
 
