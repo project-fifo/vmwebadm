@@ -46,24 +46,6 @@ clean-zip:
 release_pre:
 	mkdir -p $(RELEASE_NAME)/js
 
-overlay: clean-release all
-	-rm -rf overlay
-	mkdir -p overlay/lib/svc/method
-	mkdir -p overlay/lib/svc/manifest/system/
-	mkdir -p overlay/fifo/js
-	mkdir -p overlay/usr/sbin
-	mkdir -p overlay/var/db/vmwebadm/images
-	cp out/client/client.js out/server/server.js overlay/fifo/js
-	cp -r static/* jslib overlay/fifo
-	rm -r overlay/fifo/jslib/*/.git*
-	mv overlay/fifo/data/vmwebadmd.xml overlay/lib/svc/manifest/system/
-	mv overlay/fifo/vmwebadmd overlay/lib/svc/method/
-	mv overlay/fifo/vmwebadm overlay/usr/sbin
-	sed -i overlay/lib/svc/manifest/system/vmwebadmd.xml -e 's;!DEPLOY_PATH!;/lib/svc/method;g'
-	sed -i overlay/usr/sbin/vmwebadm -e 's;!DEPLOY_PATH!;/fifo;g'
-	sed -i overlay/lib/svc/method/vmwebadmd -e 's;!DEPLOY_PATH!;/fifo;g'
-
-
 fix_path:
 	sed -i $(RELEASE_NAME)/data/vmwebadmd.xml -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g'
 	sed -i $(RELEASE_NAME)/vmwebadm -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g'
