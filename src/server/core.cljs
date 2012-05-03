@@ -38,12 +38,10 @@
 
 (defn start [& _]
   (storage/init)
-  (if (get-in @storage/data [:network :admin])
-    (let [server (.createServer http handler)
-          port (get-in @storage/data [:server :port] 80)
-          host (get-in @storage/data [:server :host] "0.0.0.0")]
-      (.listen server port host)
-      (println "Server running at" (str "http://" host ":" port "/")))
-    (println "Error: no admin network specified, please use ./client.sh to create it!")))
+  (let [server (.createServer http handler)
+        port (get-in @storage/data [:server :port] 80)
+        host (get-in @storage/data [:server :host] "0.0.0.0")]
+    (.listen server port host)
+    (println "Server running at" (str "http://" host ":" port "/"))))
 
 (set! *main-cli-fn* start)
