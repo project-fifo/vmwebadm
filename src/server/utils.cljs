@@ -49,7 +49,6 @@
     (if (>= (get @storage/data :debug 0) lvl)
       (print (str "[" (lvl-to-str lvl) "]") (apply str (map #(if (string? %) % (pr-str %)) strs)) "\n"))))
 
-
 (defn log-exception [strs]
   (apply log :error strs))
 

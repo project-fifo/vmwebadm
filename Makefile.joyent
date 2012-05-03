@@ -18,9 +18,9 @@ install: world
 	cp out/client/client.js out/server/server.js $(DESTDIR)/fifo/vmwebadm/js
 	cp -r static/* jslib $(DESTDIR)/fifo/vmwebadm
 	rm -r $(DESTDIR)/fifo/vmwebadm/jslib/*/.git*
-	mv $(DESTDIR)/fifo/data/vmwebadmd.xml $(DESTDIR)/lib/svc/manifest/system/
-	mv $(DESTDIR)/fifo/vmwebadmd $(DESTDIR)/lib/svc/method/
-	mv $(DESTDIR)/fifo/vmwebadm $(DESTDIR)/usr/sbin
+	mv $(DESTDIR)/fifo/vmwebadm/data/vmwebadmd.xml $(DESTDIR)/lib/svc/manifest/system/
+	mv $(DESTDIR)/fifo/vmwebadm/vmwebadmd $(DESTDIR)/lib/svc/method/
+	mv $(DESTDIR)/fifo/vmwebadm/vmwebadm $(DESTDIR)/usr/sbin
 	sed -i $(DESTDIR)/lib/svc/manifest/system/vmwebadmd.xml -e 's;!DEPLOY_PATH!;/lib/svc/method;g'
 	sed -i $(DESTDIR)/usr/sbin/vmwebadm -e 's;!DEPLOY_PATH!;/fifo/vmwebadm;g'
 	sed -i $(DESTDIR)/lib/svc/method/vmwebadmd -e 's;!DEPLOY_PATH!;/fifo/vmwebadm;g'

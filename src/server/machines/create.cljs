@@ -112,7 +112,7 @@
                   (set-driver dataset "disk_driver")
                   (set-driver dataset "nic_driver")
                   (add-network dataset))]
-    (log 5 "spec: " (pr-str spec))
+    (log 5 "spec: " spec)
     spec))
 
 (defn add-keys [login data]
