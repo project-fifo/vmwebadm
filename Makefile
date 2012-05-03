@@ -37,7 +37,7 @@ out/client/client.js: $(CLIENT_SRC_FILES) $(CLOJURESCRIPT_HOME)/bin/cljsc
 	$(CLOJURESCRIPT_HOME)/bin/cljsc $(CLIENT_FILES) \
 	'{:optimizations :simple :pretty-print true :target :nodejs :output-dir "out/client" :output-to "out/client/client.js"}'
 
-deploy: release all
+deploy: rel all
 	scp -r $(RELEASE_NAME) $(DEPLOY_USER)@$(DEPLOY_HOST):$(DEPLOY_PATH)
 
 clean-release:
@@ -61,5 +61,5 @@ release_main:
 
 rel: clean-release all release_pre release_main fix_path
 
-tar: release
+tar: rel
 	tar cvzf vmwebadm-0.4.1.tar.bz2 vmwebadm
