@@ -29,14 +29,16 @@
   {:error 1
    :warning 2
    :info 3
-   :debug 4})
+   :debug 4
+   :trace 5})
 
 (defn- lvl-to-str [lvl]
-  (if-let [e (get ["ALL "
-                   "ERR "
-                   "WARN"
-                   "INFO"
-                   "DBG "] lvl)]
+  (if-let [e (get [" ALL "
+                   " ERR "
+                   "WARN "
+                   "INFO "
+                   " DBG "
+                   "TRACE"] lvl)]
     e
     (str "LVL" lvl)))
 
@@ -45,7 +47,7 @@
               lvl
               (log-syms lvl))]
     (if (>= (get @storage/data :debug 0) lvl)
-      (print (str "[" (lvl-to-str lvl) "]") (apply str strs) "\n"))))
+      (print (str "[" (lvl-to-str lvl) "]") (apply str (map #(if (string? %) % (pr-str %)) strs)) "\n"))))
 
 
 (defn log-exception [strs]
