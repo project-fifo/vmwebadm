@@ -8,6 +8,7 @@ DEPLOY_USER=root
 DEPLOY_HOST=172.16.0.4
 DEPLOY_PATH=/opt
 RELEASE_NAME=vmwebadm
+RELEASE_VERSION=0.4.2
 
 all: out/server/server.js out/client/client.js
 
@@ -62,4 +63,4 @@ release_main:
 rel: clean-release all release_pre release_main fix_path
 
 tar: rel
-	tar cvzf vmwebadm-0.4.1.tar.bz2 vmwebadm
+	tar cvzf vmwebadm-$(RELEASE_VERSION).tar.bz2 vmwebadm
