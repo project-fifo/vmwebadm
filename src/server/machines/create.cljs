@@ -23,29 +23,30 @@
 
 (defn- add-network [dataste spec]
   (log 4 "add-network")
-  [admin (if (get-in @storage/data [:network :admin])
-           (storage/next-ip :admin)
-           false)
-   ext (if (get-in @storage/data [:network :ext])
-           (storage/next-ip :ext)
-           false)
-   ext   (if ext
-           (assoc ext "primary" true))
-   admin (if (and admin (not ext))
-           (assoc admin "primary" true)
-           admin)
-   specs (if ext
-           (update-in spec ["nics"] conj ext)
-           specs)
-   specs (if admin
-           (update-in spec ["nics"] conj admin)
-           specs)
-   specs (if (and (not admin) (not ext))
-           (update-in spec ["nics"] conj {"nic_tag" "admin"
-                                          "ip" "dhcp"
-                                          "primary" true})
-           specs)]
-  spec)
+  (let [admin (if (get-in @storage/data [:network :admin])
+                (storage/next-ip :admin)
+                false)
+        ext (if (get-in @storage/data [:network :ext])
+              (storage/next-ip :ext)
+              false)
+        ext   (if ext
+                (assoc ext "primary" true))
+        admin (if (and admin (not ext))
+                (assoc admin "primary" true)
+                admin)
+
+        spec (if admin
+               (update-in spec ["nics"] conj admin)
+               spec)
+        spec (if ext
+               (update-in spec ["nics"] conj ext)
+               spec)
+        spec (if (and (not admin) (not ext))
+               (update-in spec ["nics"] conj {"nic_tag" "admin"
+                                              "ip" "dhcp"
+                                              "primary" true})
+                spec)]
+    spec))
 
 (defn- set-driver [dataset type spec]
   (log 4 "set-driver: " type)
