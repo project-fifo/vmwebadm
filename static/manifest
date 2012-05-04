@@ -1,7 +1,7 @@
 d fifo/vmwebadm 0644 root sys
 d fifo/vmwebadm/data 0644 root sys
 f fifo/vmwebadm/data/db.clj.example 0644 root sys
-d fifo/vmwebadm/data/images root sys
+d fifo/vmwebadm/data/images 0755 root sys
 d fifo/vmwebadm/data/packages 0644 root sys
 f fifo/vmwebadm/data/packages/large-zone.clj 0644 root sys
 f fifo/vmwebadm/data/packages/medium-zone.clj 0644 root sys
@@ -122,4 +122,4 @@ f usr/sbin/vmwebadm 0755 root bin
 d var 0755 root root
 d var/db 0755 root sys
 d var/db/vmwebadm 0755 root sys
-d var/db/vmwebadm/images root sys
+d var/db/vmwebadm/images 755 root sys
