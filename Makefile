@@ -8,7 +8,7 @@ DEPLOY_USER=root
 DEPLOY_HOST=172.16.0.4
 DEPLOY_PATH=/opt
 RELEASE_NAME=vmwebadm
-RELEASE_VERSION=0.4.2
+RELEASE_VERSION=0.4.3
 
 all: out/server/server.js out/client/client.js
 
