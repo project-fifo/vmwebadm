@@ -31,16 +31,18 @@
    :info 3
    :debug 4
    :trace 5})
+(def log-strings
+  [" ALL "
+   " ERR "
+   "WARN "
+   "INFO "
+   " DBG "
+   "TRACE"])
 
 (defn- lvl-to-str [lvl]
-  (if-let [e (get [" ALL "
-                   " ERR "
-                   "WARN "
-                   "INFO "
-                   " DBG "
-                   "TRACE"] lvl)]
+  (if-let [e (get log-strings lvl)]
     e
-    (str "LVL" lvl)))
+    (str "LVL" lvl (if (< lvl 10) " "))))
 
 (defn log [lvl & strs]
   (let [lvl (if (number? lvl)
