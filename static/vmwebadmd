@@ -27,7 +27,7 @@ case $1 in
 	;;
     install)
 	[ -d /opt/custom/smf/ ] || mkdir -p /opt/custom/smf/
-	[ -f /opt/custom/smf/vmwebadmd.xml ] || cp data/vmwebadmd.xml /opt/custom/smf/vmwebadm.xml
+	[ -f /opt/custom/smf/vmwebadmd.xml ] || cp data/vmwebadmd.xml /opt/custom/smf/vmwebadmd.xml
 	svccfg import /opt/custom/smf/vmwebadmd.xml
 	;;
     disable)
