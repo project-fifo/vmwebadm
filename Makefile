@@ -5,7 +5,7 @@ SERVER_FILES=src/server/
 CLIENT_FILES=src/client/
 CLJSC_CP=lib/*:
 DEPLOY_USER=root
-DEPLOY_HOST=172.16.0.4
+DEPLOY_HOST=192.168.100.22
 DEPLOY_PATH=/opt
 RELEASE_NAME=vmwebadm
 RELEASE_VERSION=0.4.3
@@ -51,9 +51,9 @@ release_pre:
 	mkdir -p $(RELEASE_NAME)/js
 
 fix_path:
-	sed -i $(RELEASE_NAME)/data/vmwebadmd.xml -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g'
-	sed -i $(RELEASE_NAME)/vmwebadm -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g'
-	sed -i $(RELEASE_NAME)/vmwebadmd -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g'
+	sed -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g' -i bak $(RELEASE_NAME)/data/vmwebadmd.xml 
+	sed -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g' -i bak $(RELEASE_NAME)/vmwebadm
+	sed -e 's;!DEPLOY_PATH!;$(DEPLOY_PATH)/$(RELEASE_NAME);g' -i bak $(RELEASE_NAME)/vmwebadmd
 
 release_main:
 	cp out/client/client.js out/server/server.js $(RELEASE_NAME)/js
