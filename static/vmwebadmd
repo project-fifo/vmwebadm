@@ -2,12 +2,16 @@
 
 export NODE_PATH="/usr/ds/node_modules:!DEPLOY_PATH!/jslib:/usr/vm/node_modules/:$NODE_PATH"
 
+NODE=node
+if [ -f /usr/node/bin/node ]
+        NODE=/usr/node/bin/node
+fi
 start() {
     if [ ! -f /var/db/vmwebadm/db.clj ]; then
 	mkdir -p /var/db/vmwebadm/images
 	cp !DEPLOY_PATH!/data/db.clj.example /var/db/vmwebadm/db.clj
     fi
-    node !DEPLOY_PATH!/js/server.js &
+    $NODE !DEPLOY_PATH!/js/server.js &
 }
 
 debug() {
@@ -15,7 +19,7 @@ debug() {
 	mkdir -p /var/db/vmwebadm/images
 	cp !DEPLOY_PATH!/data/db.clj.example /var/db/vmwebadm/db.clj
     fi
-    node !DEPLOY_PATH!/js/server.js
+    $NODE !DEPLOY_PATH!/js/server.js
 }
 
 case $1 in

@@ -3,4 +3,8 @@ if [ ! -f /var/db/vmwebadm/db.clj ]; then
 	mkdir -p /var/db/vmwebadm/images
 	cp !DEPLOY_PATH!/data/db.clj.example /var/db/vmwebadm/db.clj
 fi
-NODE_PATH="!DEPLOY_PATH!/jslib:/usr/vm/node_modules/:$NODE_PATH" node !DEPLOY_PATH!/js/client.js $*
+NODE=node
+if [ -f /usr/node/bin/node ]
+        NODE=/usr/node/bin/node
+fi
+NODE_PATH="!DEPLOY_PATH!/jslib:/usr/vm/node_modules/:$NODE_PATH" $NODE !DEPLOY_PATH!/js/client.js $*
