@@ -5,8 +5,8 @@
    [server.storage :as storage]
    [server.http :as http]))
 
-(def dsadm
-  (node/require "dsadm"))
+(def imgadm
+  (node/require "imgadm"))
 
 (def res-map
   {"uuid" "id"
@@ -25,7 +25,7 @@
 
 (defn handle [resource request response]
   (.listLocal
-   dsadm
+   imgadm
    (fn [error datasets]
      (let [datasets (js->clj datasets)]
        (http/ret response
