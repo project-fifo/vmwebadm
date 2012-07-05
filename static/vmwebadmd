@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export NODE_PATH="/usr/ds/node_modules:!DEPLOY_PATH!/jslib:/usr/vm/node_modules/:$NODE_PATH"
+export NODE_PATH="/usr/img/node_modules:!DEPLOY_PATH!/jslib:/usr/vm/node_modules/:$NODE_PATH"
 
 NODE=node
 if [ -f /usr/node/bin/node ]
