@@ -5,8 +5,8 @@
             [server.storage :as storage]
             [server.http :as http]))
 
-(def dsadm
-  (node/require "dsadm"))
+(def imgadm
+  (node/require "imgadm"))
 
 (def qry-map
   {"name" "alias"
@@ -63,7 +63,7 @@
                vms (if limit (take limit vms) vms)
                cnt (count vms)]
            (.listLocal
-            dsadm
+            imgadm
             (fn [error datasets]
               (let [datasets (js->clj datasets)
                     ds-map (reduce (fn [m ds]

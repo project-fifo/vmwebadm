@@ -5,8 +5,8 @@
             [server.http :as http]
             [server.storage :as storage]))
 
-(def dsadm
-  (node/require "dsadm"))
+(def imgadm
+  (node/require "imgadm"))
 
 (defn- assoc-if [m m1 from-k to-k]
   (if-let [v (m1 from-k)]
@@ -125,7 +125,7 @@
   (http/with-reqest-body request
     (fn [data]
       (.show
-       dsadm
+       imgadm
        (data "dataset")
        (fn [error dataset]
          (let [dataset (js->clj dataset)]
