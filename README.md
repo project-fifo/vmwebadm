@@ -1,7 +1,7 @@
 General
 =======
 
-This project is ment to implement Joyent's cloud API (http://apidocs.joyent.com/sdcapidoc/cloudapi/#machines) ontop of vanilla SmartOS to allow an easyer maintainace and handling of the host.
+This project is meant to implement Joyent's cloud API (http://apidocs.joyent.com/sdcapidoc/cloudapi/#machines) on-top of vanilla SmartOS to allow for easier maintenance and handling of the host.
 
 You can use tools like SmartDC CLI (http://wiki.joyentcloud.com/display/jpc2/About+Using+the+Cloud+API).
 
@@ -32,7 +32,7 @@ On your client
 
 On your SmartOS Server
 ----------------------
-The default behavior for the server is to listen to 127.0.0.1:80, you can change this with ./vmwebadm port and host
+The default behaviour for the server is to listen to 127.0.0.1:80, you can change this with ./vmwebadm port and host
 
 * By default there is admin user called admin with the password admin
 * Add users as you want with: ./vmwebadm passwd <your user> <your pass>
@@ -44,7 +44,7 @@ Make it a service
 
 you can disable the service with ./vmwebadmd disable and enable it with ./vmwebadmd enable
 
-The service is persistant over reboots!
+The service is persistent and will survive reboots!
 
 On your client
 --------------
@@ -61,7 +61,7 @@ Configuration commands
 
 ```
 Configuration tool
-  import pacakge <package-file(s)> - imports one or more pacakge files.
+  import package <package-file(s)> - imports one or more package files.
   default-dataset <dataset>        - sets the default dataset.
   passwd <user> <pass>             - adds a new user or resets a password for an existing one.
   list users                       - lists all known users
