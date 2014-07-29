@@ -1,3 +1,7 @@
+DISCONTINUED
+============
+The project is discontinued in favour for (https://project-fifo.net)[Project FiFo].
+
 General
 =======
 
